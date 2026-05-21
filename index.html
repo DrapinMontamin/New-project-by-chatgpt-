@@ -3,51 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" description="ChatGPT était en panne dsl les gars">
-    <title>New Project (by ChatGPT et les autres)</title>
+    <title>New Project (by Gemini, ChatGPT et les autres)</title>
     <style>
         :root {
             --neon-cyan: #00f3ff;
             --neon-pink: #ff00ea;
             --neon-yellow: #fff600;
             --dark-bg: #050505;
+            --amai-bg: #f7f4ea; /* Blanc beige */
+            --amai-dark: #1a1a1a;
         }
 
         body {
             margin: 0;
             padding: 0;
             background-color: var(--dark-bg);
-            /* Effet disco : variation de couleur globale en continu */
-            animation: disco-bg 6s infinite linear;
             color: white;
             font-family: 'Consolas', 'Courier New', monospace;
-            overflow: hidden;
+            overflow-x: hidden;
+        }
+
+        /* --- FILTRES GLOBAUX --- */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.3));
+            background-size: 100% 6px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* =========================================
+           SECTION 1 : DRAPIN (Style Original)
+           ========================================= */
+        .section-drapin {
+            position: relative;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            height: 100vh;
-            box-sizing: border-box;
+            justify-content: center;
             padding: 40px 20px;
+            box-sizing: border-box;
+            animation: disco-bg 6s infinite linear;
+            z-index: 2;
         }
 
-        /* Ambiance Disco / Grille Lumineuse */
-        .grid-floor {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        .grid-floor-drapin {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-image: 
                 linear-gradient(rgba(0, 243, 255, 0.1) 2px, transparent 2px),
                 linear-gradient(90deg, rgba(255, 0, 234, 0.1) 2px, transparent 2px);
             background-size: 40px 40px;
-            z-index: 1;
+            z-index: -1;
             animation: grid-move 4s infinite linear;
-        }
-
-        @keyframes grid-move {
-            0% { background-position: 0 0; }
-            100% { background-position: 40px 40px; }
         }
 
         @keyframes disco-bg {
@@ -55,16 +65,21 @@
             100% { filter: hue-rotate(360deg); }
         }
 
-        /* Titre Glitch & Pulsation */
-        h1 {
+        h1.glitch {
             font-size: 4rem;
             text-transform: uppercase;
             margin: 0;
-            z-index: 5;
             letter-spacing: 5px;
             text-shadow: 0 0 10px var(--neon-cyan), 0 0 30px var(--neon-pink);
             animation: pulse 0.5s infinite alternate;
             text-align: center;
+        }
+
+        .category-title {
+            color: var(--neon-yellow);
+            text-shadow: 0 0 10px var(--neon-yellow);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
         }
 
         @keyframes pulse {
@@ -72,12 +87,12 @@
             100% { transform: scale(1.03); text-shadow: 0 0 30px var(--neon-pink), 0 0 50px var(--neon-cyan); }
         }
 
-        /* ZONE DENSEUR TECKTONIK */
+        /* --- DANCEFLOOR ET SVG --- */
         .dancefloor {
             position: relative;
             width: 200px;
             height: 250px;
-            z-index: 5;
+            margin: 20px 0;
         }
 
         .dancer {
@@ -93,38 +108,27 @@
             filter: drop-shadow(0 0 8px var(--neon-cyan)) drop-shadow(0 0 15px var(--neon-pink));
         }
 
-        /* Animations Tecktonik (Mouvements de bras et de corps asymétriques) */
-        .left-arm {
-            animation: tck-left 0.4s infinite alternate ease-in-out;
-            transform-origin: 40px 70px;
-        }
-        .right-arm {
-            animation: tck-right 0.3s infinite alternate ease-in-out;
-            transform-origin: 60px 70px;
-        }
-        .legs {
-            animation: tck-legs 0.2s infinite alternate ease-in-out;
-            transform-origin: 50px 110px;
-        }
+        /* Animations Tecktonik */
+        .left-arm { animation: tck-left 0.4s infinite alternate ease-in-out; transform-origin: 40px 70px; }
+        .right-arm { animation: tck-right 0.3s infinite alternate ease-in-out; transform-origin: 60px 70px; }
+        .legs { animation: tck-legs 0.2s infinite alternate ease-in-out; transform-origin: 50px 110px; }
 
         @keyframes tck-left {
             0% { transform: rotate(0deg) translateY(0); }
             50% { transform: rotate(-60deg) translateY(-5px); }
             100% { transform: rotate(40deg) translateX(5px); }
         }
-
         @keyframes tck-right {
             0% { transform: rotate(0deg); }
             50% { transform: rotate(80deg) cubic-bezier(0.11, 0, 0, 1); }
             100% { transform: rotate(-30deg); }
         }
-
         @keyframes tck-legs {
             0% { transform: scaleX(1) translateY(0); }
             100% { transform: scaleX(1.1) translateY(4px); }
         }
 
-        /* CONTENEUR BOUTONS EN LIGNE */
+        /* --- BOUTONS DRAPIN --- */
         .button-container {
             display: flex;
             flex-direction: row;
@@ -133,10 +137,8 @@
             align-items: center;
             flex-wrap: wrap;
             width: 100%;
-            z-index: 5;
         }
 
-        /* Boutons Améliorés */
         .btn {
             padding: 15px 25px;
             font-size: 1rem;
@@ -154,7 +156,6 @@
             animation: btn-blink 1s infinite alternate;
         }
 
-        /* Clignotement alterné pour chaque bouton */
         .btn:nth-child(2n) { animation-delay: 0.3s; }
         .btn:nth-child(3n) { animation-delay: 0.6s; }
 
@@ -169,48 +170,213 @@
             color: var(--dark-bg);
             box-shadow: 0 0 40px #fff, 0 0 80px var(--neon-pink);
             transform: scale(1.1) rotate(-1deg);
-            animation: none; /* Stoppe le clignotement pour focus sur le hover */
+            animation: none;
         }
 
-        /* Filtres et lignes TV */
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100vh;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.3));
-            background-size: 100% 6px;
-            pointer-events: none;
-            z-index: 10;
+        /* =========================================
+           SÉPARATEUR : BANDEAU INVERSÉ
+           ========================================= */
+        .marquee-separator {
+            width: 100%;
+            background: var(--amai-bg);
+            color: var(--amai-dark);
+            padding: 15px 0;
+            overflow: hidden;
+            border-top: 4px solid var(--neon-cyan);
+            border-bottom: 4px solid var(--amai-dark);
+            position: relative;
+            z-index: 5;
+        }
+
+        .marquee-content {
+            display: flex;
+            white-space: nowrap;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: marquee-scroll 15s linear infinite;
+        }
+
+        .marquee-content span {
+            padding: 0 30px;
+        }
+
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* =========================================
+           SECTION 2 : AMAI (Blanc / Beige)
+           ========================================= */
+        .section-amai {
+            position: relative;
+            min-height: 100vh;
+            background-color: var(--amai-bg);
+            color: var(--amai-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            z-index: 2;
+        }
+
+        .grid-floor-amai {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.1) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.1) 2px, transparent 2px);
+            background-size: 40px 40px;
+            z-index: -1;
+            animation: grid-move 4s infinite linear reverse;
+        }
+
+        @keyframes grid-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .amai-title {
+            font-size: 4rem;
+            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: 5px;
+            color: var(--amai-dark);
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+
+        .amai-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed var(--amai-dark);
+            padding-bottom: 5px;
+        }
+
+        /* --- BLAHAJ ANIMATION ET SVG --- */
+        .blahaj-container {
+            width: 280px;
+            height: 160px;
+            margin: 20px 0;
+            animation: swim 4s ease-in-out infinite;
+        }
+
+        @keyframes swim {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(-3deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        .blahaj-svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--amai-dark);
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.2));
+        }
+
+        .blahaj-fill {
+            fill: var(--amai-dark);
+        }
+
+        /* --- BOUTONS AMAI --- */
+        .btn-amai {
+            background: #fff;
+            color: var(--amai-dark);
+            border: 3px solid var(--amai-dark);
+            box-shadow: 4px 4px 0px var(--amai-dark);
+            animation: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-amai:hover {
+            background: var(--amai-dark);
+            color: var(--amai-bg);
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.5);
+            transform: translate(-3px, -3px);
         }
     </style>
 </head>
 <body>
-    <div class="grid-floor"></div>
     <div class="scanlines"></div>
 
-    <h1 class="glitch" data-text="SELECT_YOUR_DESTINATION">SELECT_YOUR_DESTINATION</h1>
+    <section class="section-drapin">
+        <div class="grid-floor-drapin"></div>
+        
+        <h1 class="glitch" data-text="SELECT_YOUR_DESTINATION">SELECT_YOUR_DESTINATION</h1>
+        <h2 class="category-title">DRAPIN</h2>
 
-    <div class="dancefloor">
-        <svg class="dancer" viewBox="0 0 100 180">
-            <circle cx="50" cy="40" r="12" class="neon-glow" />
-            <line x1="50" y1="52" x2="50" y2="110" class="neon-glow" />
-            <path d="M 50 65 L 20 50 L 35 25" class="neon-glow left-arm" />
-            <path d="M 50 65 L 80 75 L 65 30" class="neon-glow right-arm" />
-            <g class="legs">
-                <path d="M 50 110 L 30 160 L 15 165" class="neon-glow" />
-                <path d="M 50 110 L 70 160 L 85 165" class="neon-glow" />
-            </g>
-        </svg>
+        <div class="dancefloor">
+            <svg class="dancer" viewBox="0 0 100 180">
+                <circle cx="50" cy="40" r="12" class="neon-glow" />
+                <line x1="50" y1="52" x2="50" y2="110" class="neon-glow" />
+                <path d="M 50 65 L 20 50 L 35 25" class="neon-glow left-arm" />
+                <path d="M 50 65 L 80 75 L 65 30" class="neon-glow right-arm" />
+                <g class="legs">
+                    <path d="M 50 110 L 30 160 L 15 165" class="neon-glow" />
+                    <path d="M 50 110 L 70 160 L 85 165" class="neon-glow" />
+                </g>
+            </svg>
+        </div>
+
+        <div class="button-container">
+            <button class="btn" data-url="sites/terrahill-index.html">TERRAHILL v1</button>
+            <button class="btn" data-url="sites/terrahill-index-chaos.html">TERRAHILL CHAOS</button>
+            <button class="btn" data-url="sites/family-tree.html">FAMILY TREE</button>
+            <button class="btn" data-url="sites/gnome-clicker.html">GNOMISH CLICKER</button>
+        </div>
+    </section>
+
+    <div class="marquee-separator">
+        <div class="marquee-content">
+            <span>WARNING: ENTERING AMAI ZONE</span>
+            <span>WARNING: ENTERING AMAI ZONE</span>
+            <span>WARNING: ENTERING AMAI ZONE</span>
+            <span>WARNING: ENTERING AMAI ZONE</span>
+            <span>WARNING: ENTERING AMAI ZONE</span>
+            <span>WARNING: ENTERING AMAI ZONE</span>
+        </div>
     </div>
 
-    <div class="button-container"> <!-- C'est ici pour ajouter des liens -->
-        <button class="btn" data-url="sites/terrahill-index.html">TERRAHILL v1</button>
-        <button class="btn" data-url="sites/terrahill-index-chaos.html">TERRAHILL CHAOS</button>
-        <button class="btn" data-url="sites/family-tree.html">FAMILY TREE</button>
-        <button class="btn" data-url="sites/gnome-clicker.html">GNOMISH CLICKER</button>
-    </div>
+    <section class="section-amai">
+        <div class="grid-floor-amai"></div>
+
+        <h1 class="amai-title">AMAI</h1>
+        <div class="blahaj-container">
+            <svg class="blahaj-svg" viewBox="0 0 200 120">
+                <path d="M 30 70 C 40 40, 100 30, 140 50 L 180 25 L 165 65 L 185 105 L 140 75 C 100 95, 50 90, 30 70 Z" />
+                <path d="M 90 36 L 110 5 L 125 43" />
+                <path d="M 85 80 L 60 110 L 105 85" />
+                <circle cx="55" cy="55" r="4" class="blahaj-fill" />
+                <line x1="75" y1="55" x2="75" y2="70" />
+                <line x1="82" y1="53" x2="82" y2="72" />
+                <line x1="89" y1="55" x2="89" y2="70" />
+                <path d="M 35 75 Q 45 80 55 75" />
+            </svg>
+        </div>
+        <h2 class="amai-subtitle">>> TAMASHIKA <<</h2>
+
+
+
+        <div class="button-container">
+            <button class="btn btn-amai" data-url="sites/Amai/TamashikaFocus.html">FOCUS</button>
+            <button class="btn btn-amai" data-url="sites/Amai/TamashikaOverload.html">OVERLOAD</button>
+        </div>
+        <h2 class="amai-subtitle">>> ULTRAKILL <<</h2>
+        <div class="button-container">
+            <button class="btn btn-amai" data-url="sites/Amai/UltrakillTerminalThing.html">TERMINAL</button>
+            <button class="btn btn-amai" data-url="sites/Amai/UltrakillEffect.html">WEAPONS</button>
+        </div>
+    </section>
 
     <script>
-        const allButtons = document.querySelectorAll('.btn');
+        const allButtons = document.querySelectorAll('.btn, .btn-amai');
         allButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const targetUrl = button.getAttribute('data-url');
