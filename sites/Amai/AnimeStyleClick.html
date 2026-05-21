@@ -146,7 +146,12 @@
     </style>
 </head>
 <body id="main-body">
-
+<audio id="bg-music" loop>
+    <source src="AnimeMusic.mp3" type="audio/mpeg">
+</audio>
+<audio id="notif-sound">
+    <source src="discord-notification.mp3" type="audio/mpeg">
+</audio>
     <div class="sunburst"></div>
     <canvas id="fx-canvas"></canvas>
 
@@ -156,6 +161,12 @@
     </div>
 
 <script>
+    // Ajoutez ceci tout en haut de votre balise <script>
+    const audio = document.getElementById('bg-music');
+    audio.volume = 0.3; // Règle le volume à 30%
+    const notif = document.getElementById('notif-sound');
+    notif.volume = 0.1; // Ajustez entre 0.0 et 1.0
+    notif.play();
     const canvas = document.getElementById('fx-canvas');
     const ctx = canvas.getContext('2d');
     const body = document.getElementById('main-body');
@@ -165,6 +176,12 @@
     const colors = ["#ff007f", "#00f0ff", "#ffde00", "#39ff14", "#ffffff"];
 
     let particles = [];
+    // Fonction pour démarrer l'audio au premier clic (nécessaire pour les navigateurs)
+    window.addEventListener('mousedown', function startAudio() {
+        audio.play().catch(e => console.log("Lecture audio en attente d'interaction"));
+        // On retire l'écouteur après le premier clic pour ne pas redémarrer la musique en boucle
+        window.removeEventListener('mousedown', startAudio);
+    }, { once: true });
 
     function resize() {
         canvas.width = window.innerWidth;
@@ -275,6 +292,16 @@
 
     // Action du bouton Géant
     function megaExplosion(e) {
+        const notif = document.getElementById('notif-sound');
+        notif.currentTime = 0; // Remet le son au début si on clique rapidement plusieurs fois
+        notif.play();
+
+        // Grosse secousse
+        body.classList.add('shake');
+        setTimeout(() => body.classList.remove('shake'), 300);
+
+        // Énorme explosion au centre
+        createExplosion(window.innerWidth / 2, window.innerHeight / 2, 100);
         // Grosse secousse
         body.classList.add('shake');
         setTimeout(() => body.classList.remove('shake'), 300);

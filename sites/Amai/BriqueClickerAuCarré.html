@@ -342,7 +342,9 @@
     </style>
 </head>
 <body>
-
+    <audio id="bg-music" loop>
+        <source src="AnimeMusic.mp3" type="audio/mpeg">
+    </audio>
     <div class="ticker-wrap">
         <div class="ticker">
             ⚡ ALERTE CYBER-BRIQUE DANS L'ESPACE QUANTIQUE ! 🌌 TOURNEMENT DE TEINTE MAXIMAL ! 🥛 LAIT DE L'ESPACE DISPONIBLE ! 🧱 TECKTONIK BOT ACTIVÉ EN BAS À DROITE ! 💥 MULTIPLIEZ LES CLIQUES !
@@ -421,6 +423,8 @@
     </div>
 
     <script>
+        const audio = document.getElementById('bg-music');
+        audio.volume = 0.3; // Règle le volume à 30%
         let score = 0;
         let bricksPerClick = 1;
         let bricksPerSecond = 0;
@@ -431,7 +435,11 @@
             lait: { text: "BRIQUE LAIT 🥛", class: "skin-lait", pop: "🥛" },
             cyber: { text: "CYBER CORE 🚀", class: "skin-cyber", pop: "⚡" }
         };
-
+        window.addEventListener('mousedown', function startAudio() {
+            audio.play().catch(e => console.log("Lecture audio en attente d'interaction"));
+            // On retire l'écouteur après le premier clic pour ne pas redémarrer la musique en boucle
+            window.removeEventListener('mousedown', startAudio);
+        }, { once: true });
         const upgrades = {
             clicker: { cost: 15, power: 1, type: 'click' },
             milk: { cost: 100, power: 4, type: 'sec' },

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glitch Platformer</title>
+    <style>
+        /* RESET & BASE */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #111;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* BOUTON RETOUR */
+        #btn-retour {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border: 3px solid black;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.1s;
+        }
+        #btn-retour:hover {
+            transform: scale(1.05);
+        }
+        #btn-retour svg {
+            width: 30px;
+            height: 30px;
+            fill: black;
+        }
+
+        /* AVERTISSEMENT ÉPILEPSIE */
+        #warning-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #warning-screen h1 {
+            color: #ff3333;
+            font-size: 2em;
+            text-transform: uppercase;
+            animation: pulse 1s infinite;
+        }
+        #warning-screen p {
+            max-width: 600px;
+            line-height: 1.5;
+            font-size: 1.2em;
+        }
+        #btn-ok {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.5em;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #btn-ok:hover {
+            background-color: #ccc;
+        }
+
+        /* JEU & EFFETS */
+        #game-container {
+            width: 100%;
+            height: 100%;
+            transition: filter 0.1s;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* CLASSES D'EFFETS VISUELS */
+        .invert-colors {
+            filter: invert(100%) hue-rotate(180deg);
+        }
+        
+        .glitch-effect {
+            animation: glitch-anim 0.2s linear infinite;
+            filter: contrast(150%) saturate(200%);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes glitch-anim {
+            0% { transform: translate(0, 0) skew(0deg); }
+            20% { transform: translate(-10px, 5px) skew(-5deg); }
+            40% { transform: translate(10px, -5px) skew(5deg); }
+            60% { transform: translate(-5px, 10px) skew(0deg); }
+            80% { transform: translate(5px, -10px) skew(10deg); }
+            100% { transform: translate(0, 0) skew(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-audio" loop preload="auto">
+        <source src="Ambient.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="btn-retour" onclick="window.history.back();" title="Retour">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+    </button>
+
+    <div id="warning-screen">
+        <h1>⚠️ Avertissement Épilepsie ⚠️</h1>
+        <p>
+            Ce jeu contient des effets visuels clignotants rapides, des inversions de couleurs et des effets de "glitch" 
+            qui peuvent déclencher des crises chez les personnes souffrant d'épilepsie photosensible.
+        </p>
+        <p>La discrétion du joueur est conseillée.</p>
+        <button id="btn-ok">J'AI COMPRIS, JOUER</button>
+    </div>
+
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <script>
+        const warningScreen = document.getElementById('warning-screen');
+        const btnOk = document.getElementById('btn-ok');
+        const bgAudio = document.getElementById('bg-audio');
+        const gameContainer = document.getElementById('game-container');
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        btnOk.addEventListener('click', () => {
+            warningScreen.style.display = 'none';
+            bgAudio.volume = 0.5;
+            bgAudio.play().catch(e => console.log("Audio non trouvé ou bloqué", e));
+            loadLevel(currentLevel);
+            gameLoop();
+        });
+
+        // --- SVGs ---
+        const playerSvg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+                <rect width="40" height="40" fill="#00FFCC" rx="8" />
+                <rect x="8" y="10" width="8" height="8" fill="#000" />
+                <rect x="24" y="10" width="8" height="8" fill="#000" />
+                <path d="M 12 28 Q 20 35 28 28" stroke="#000" stroke-width="3" fill="none" />
+            </svg>
+        `;
+        const playerImg = new Image();
+        playerImg.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(playerSvg);
+
+        const goalSvg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50">
+                <polygon points="25,0 50,25 25,50 0,25" fill="#FF00FF"/>
+                <circle cx="25" cy="25" r="10" fill="#FFF"/>
+            </svg>
+        `;
+        const goalImg = new Image();
+        goalImg.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(goalSvg);
+
+        // --- VARIABLES DE JEU ---
+        let player = { 
+            x: 50, y: 100, w: 40, h: 40, 
+            vx: 0, vy: 0, speed: 5, jumpPower: -12, 
+            grounded: false, canDoubleJump: false 
+        };
+        const gravity = 0.5;
+        const friction = 0.8;
+        let platforms = [];
+        let goal = { x: 0, y: 0, w: 50, h: 50 };
+        let cameraX = 0;
+        let killFloor = 1000;
+        
+        let actions = { left: false, right: false, jump: false, jumpPressed: false };
+
+        // --- COMMANDES DE LA CONSOLE (DEV TOOLS) ---
+        window.DragCharacter = false; // Modifiable via "DragCharacter = true" dans la console
+        let isDragging = false;
+
+        window.GoToLevel = function(levelNumber) {
+            let index = levelNumber - 1;
+            if (index >= 0 && index < levels.length) {
+                currentLevel = index;
+                loadLevel(currentLevel);
+                console.log(`%c Changement vers le Niveau ${levelNumber}`, "color: #00FFCC; font-weight: bold;");
+            } else {
+                console.error(`Le niveau ${levelNumber} n'existe pas. Choisissez entre 1 et 10.`);
+            }
+        };
+
+        // Instructions affichées automatiquement au lancement dans la console
+        console.log("%c--- COMMANDES DE TRICHE DISPONIBLES ---", "color: #FF00FF; font-weight: bold; font-size: 12px;");
+        console.log("Activer le drag & drop : %cDragCharacter = true", "color: #00FFCC; font-style: italic;");
+        console.log("Changer de niveau : %cGoToLevel(numéro)", "color: #00FFCC; font-style: italic;");
+
+        // Événements Souris pour le DragCharacter
+        window.addEventListener('mousedown', (e) => {
+            if (!window.DragCharacter) return;
+            
+            // Calculer la position réelle de la souris dans le monde en prenant en compte la caméra X
+            let mouseWorldX = e.clientX + cameraX;
+            let mouseWorldY = e.clientY;
+
+            // Vérifier si la souris est sur le joueur
+            if (mouseWorldX >= player.x && mouseWorldX <= player.x + player.w &&
+                mouseWorldY >= player.y && mouseWorldY <= player.y + player.h) {
+                isDragging = true;
+                player.vx = 0;
+                player.vy = 0;
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (window.DragCharacter && isDragging) {
+                // Centrer le personnage sur le curseur de la souris dans le monde
+                player.x = (e.clientX + cameraX) - player.w / 2;
+                player.y = e.clientY - player.h / 2;
+                player.vx = 0;
+                player.vy = 0;
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+
+        window.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            if (e.code === 'ArrowLeft' || key === 'a' || key === 'q') actions.left = true;
+            if (e.code === 'ArrowRight' || key === 'd') actions.right = true;
+            if (e.code === 'ArrowUp' || key === 'w' || key === 'z' || e.code === 'Space') {
+                if (!actions.jump) {
+                    actions.jumpPressed = true;
+                }
+                actions.jump = true;
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            const key = e.key.toLowerCase();
+            if (e.code === 'ArrowLeft' || key === 'a' || key === 'q') actions.left = false;
+            if (e.code === 'ArrowRight' || key === 'd') actions.right = false;
+            if (e.code === 'ArrowUp' || key === 'w' || key === 'z' || e.code === 'Space') {
+                actions.jump = false;
+            }
+        });
+
+        // --- DÉFINITION DES 10 NIVEAUX ---
+        let currentLevel = 0;
+        const levels = [
+            { // 1
+                spawn: { x: 50, y: 300 }, goal: { x: 1900, y: 300 },
+                platforms: [ { x: 0, y: 400, w: 500, h: 50 }, { x: 600, y: 400, w: 300, h: 50 }, { x: 1000, y: 350, w: 200, h: 50 }, { x: 1300, y: 350, w: 300, h: 50 }, { x: 1700, y: 350, w: 300, h: 50 } ]
+            },
+            { // 2
+                spawn: { x: 50, y: 300 }, goal: { x: 1800, y: 50 },
+                platforms: [ { x: 0, y: 400, w: 300, h: 50 }, { x: 400, y: 350, w: 200, h: 50 }, { x: 700, y: 300, w: 200, h: 50 }, { x: 1000, y: 250, w: 200, h: 50 }, { x: 1300, y: 200, w: 200, h: 50 }, { x: 1600, y: 100, w: 300, h: 50 } ]
+            },
+            { // 3
+                spawn: { x: 50, y: 300 }, goal: { x: 2000, y: 300 },
+                platforms: [ { x: 0, y: 400, w: 200, h: 50 }, { x: 350, y: 400, w: 80, h: 50 }, { x: 600, y: 400, w: 80, h: 50 }, { x: 850, y: 350, w: 80, h: 50 }, { x: 1100, y: 300, w: 80, h: 50 }, { x: 1350, y: 400, w: 80, h: 50 }, { x: 1600, y: 350, w: 200, h: 50 }, { x: 1900, y: 350, w: 200, h: 50 } ]
+            },
+            { // 4
+                spawn: { x: 50, y: 100 }, goal: { x: 2000, y: 100 },
+                platforms: [ { x: 0, y: 200, w: 200, h: 50 }, { x: 300, y: 300, w: 150, h: 50 }, { x: 550, y: 450, w: 150, h: 50 }, { x: 850, y: 600, w: 300, h: 50 }, { x: 1300, y: 450, w: 150, h: 50 }, { x: 1600, y: 300, w: 150, h: 50 }, { x: 1900, y: 150, w: 200, h: 50 } ]
+            },
+            { // 5
+                spawn: { x: 50, y: 300 }, goal: { x: 1900, y: 150 },
+                platforms: [
+                    { x: 0, y: 400, w: 300, h: 50 },
+                    { x: 300, y: 240, w: 50, h: 210 }, 
+                    { x: 350, y: 400, w: 150, h: 50 },
+                    { x: 600, y: 0, w: 50, h: 280 },   
+                    { x: 750, y: 400, w: 200, h: 50 },
+                    { x: 1050, y: 300, w: 150, h: 50 },
+                    { x: 1350, y: 200, w: 150, h: 50 },
+                    { x: 1650, y: 250, w: 250, h: 50 }
+                ]
+            },
+            { // 6
+                spawn: { x: 50, y: 300 }, goal: { x: 2200, y: 300 },
+                platforms: [ { x: 0, y: 400, w: 300, h: 50 }, { x: 450, y: 400, w: 200, h: 50 }, { x: 800, y: 400, w: 150, h: 50 }, { x: 1150, y: 400, w: 150, h: 50 }, { x: 1500, y: 350, w: 150, h: 50 }, { x: 1850, y: 350, w: 100, h: 50 }, { x: 2100, y: 350, w: 200, h: 50 } ]
+            },
+            { // 7
+                spawn: { x: 50, y: 300 }, goal: { x: 1800, y: 100 },
+                platforms: [ { x: 0, y: 400, w: 150, h: 50 }, { x: 250, y: 400, w: 40, h: 400 }, { x: 400, y: 350, w: 40, h: 400 }, { x: 550, y: 300, w: 40, h: 400 }, { x: 700, y: 250, w: 40, h: 400 }, { x: 900, y: 350, w: 40, h: 400 }, { x: 1100, y: 400, w: 150, h: 50 }, { x: 1400, y: 300, w: 100, h: 50 }, { x: 1700, y: 150, w: 200, h: 50 } ]
+            },
+            { // 8
+                spawn: { x: 50, y: 300 }, goal: { x: 1800, y: 650 },
+                platforms: [ { x: 0, y: 400, w: 200, h: 50 }, { x: 250, y: 300, w: 150, h: 50 }, { x: 450, y: 200, w: 150, h: 50 }, { x: 700, y: 200, w: 100, h: 50 }, { x: 850, y: 350, w: 100, h: 50 }, { x: 1000, y: 500, w: 100, h: 50 }, { x: 1200, y: 600, w: 150, h: 50 }, { x: 1500, y: 600, w: 100, h: 50 }, { x: 1750, y: 700, w: 200, h: 50 } ]
+            },
+            { // 9
+                spawn: { x: 50, y: 500 }, goal: { x: 2100, y: 100 },
+                platforms: [ { x: 0, y: 600, w: 200, h: 50 }, { x: 250, y: 500, w: 80, h: 50 }, { x: 400, y: 400, w: 80, h: 50 }, { x: 550, y: 300, w: 80, h: 50 }, { x: 750, y: 200, w: 80, h: 50 }, { x: 1000, y: 200, w: 80, h: 50 }, { x: 1250, y: 250, w: 80, h: 50 }, { x: 1500, y: 200, w: 80, h: 50 }, { x: 1750, y: 150, w: 80, h: 50 }, { x: 2000, y: 150, w: 200, h: 50 } ]
+            },
+            { // 10
+                spawn: { x: 50, y: 400 }, goal: { x: 2500, y: 100 },
+                platforms: [ 
+                    { x: 0, y: 500, w: 150, h: 50 }, { x: 250, y: 400, w: 50, h: 50 }, { x: 400, y: 300, w: 50, h: 50 }, { x: 600, y: 200, w: 100, h: 50 }, 
+                    { x: 750, y: 0, w: 50, h: 280 }, 
+                    { x: 800, y: 400, w: 150, h: 50 }, { x: 1050, y: 350, w: 50, h: 50 }, { x: 1250, y: 250, w: 50, h: 50 }, { x: 1500, y: 200, w: 100, h: 50 }, { x: 1750, y: 250, w: 100, h: 50 }, { x: 2050, y: 250, w: 50, h: 50 }, { x: 2300, y: 150, w: 50, h: 50 }, { x: 2450, y: 150, w: 200, h: 50 } 
+                ]
+            }
+        ];
+
+        function loadLevel(index) {
+            if (index >= levels.length) {
+                alert("🎉 FÉLICITATIONS ! Vous avez survécu aux 10 niveaux glitchés ! 🎉");
+                currentLevel = 0;
+                index = 0;
+            }
+            
+            let lvl = levels[index];
+            player.x = lvl.spawn.x;
+            player.y = lvl.spawn.y;
+            player.vx = 0;
+            player.vy = 0;
+            platforms = lvl.platforms;
+            goal.x = lvl.goal.x;
+            goal.y = lvl.goal.y;
+
+            let maxPlatformY = 0;
+            platforms.forEach(p => { if(p.y > maxPlatformY) maxPlatformY = p.y; });
+            killFloor = maxPlatformY + 500; 
+        }
+
+        function checkCollision(r1, r2) {
+            return (r1.x < r2.x + r2.w &&
+                    r1.x + r1.w > r2.x &&
+                    r1.y < r2.y + r2.h &&
+                    r1.y + r1.h > r2.y);
+        }
+
+        // --- GESTION DES EFFETS ---
+        let glitchTimer = 0;
+        let invertTimer = 0;
+
+        function updateEffects() {
+            if (Math.random() < 0.01 && invertTimer <= 0) {
+                gameContainer.classList.add('invert-colors');
+                invertTimer = 20 + Math.random() * 40;
+            }
+            if (invertTimer > 0) {
+                invertTimer--;
+                if (invertTimer <= 0) gameContainer.classList.remove('invert-colors');
+            }
+
+            if (Math.random() < 0.02 && glitchTimer <= 0) {
+                gameContainer.classList.add('glitch-effect');
+                glitchTimer = 10 + Math.random() * 20;
+            }
+            if (glitchTimer > 0) {
+                glitchTimer--;
+                if (glitchTimer <= 0) gameContainer.classList.remove('glitch-effect');
+            }
+        }
+
+        function update() {
+            // Si on déplace à la souris, on désactive la physique normale
+            if (window.DragCharacter && isDragging) {
+                updateEffects();
+                
+                // Le niveau change quand même si on amène le joueur sur l'objectif à la souris
+                if (checkCollision(player, goal)) {
+                    currentLevel++;
+                    loadLevel(currentLevel);
+                }
+
+                let targetCameraX = player.x - canvas.width / 3;
+                if (targetCameraX < 0) targetCameraX = 0;
+                cameraX += (targetCameraX - cameraX) * 0.1;
+                return; 
+            }
+
+            // Physique classique si non "dragged"
+            if (actions.left) player.vx -= 1;
+            if (actions.right) player.vx += 1;
+            
+            player.vx *= friction;
+            player.x += player.vx;
+
+            platforms.forEach(p => {
+                if (checkCollision(player, p)) {
+                    if (player.vx > 0) player.x = p.x - player.w;
+                    else if (player.vx < 0) player.x = p.x + p.w;
+                    player.vx = 0;
+                }
+            });
+
+            player.vy += gravity;
+            player.y += player.vy;
+            player.grounded = false;
+
+            platforms.forEach(p => {
+                if (checkCollision(player, p)) {
+                    if (player.vy > 0) {
+                        player.y = p.y - player.h;
+                        player.vy = 0;
+                        player.grounded = true;
+                        player.canDoubleJump = true; 
+                    } else if (player.vy < 0) {
+                        player.y = p.y + p.h;
+                        player.vy = 0;
+                    }
+                }
+            });
+
+            if (actions.jumpPressed) {
+                if (player.grounded) {
+                    player.vy = player.jumpPower;
+                    player.grounded = false;
+                    player.canDoubleJump = true;
+                } else if (player.canDoubleJump) {
+                    player.vy = player.jumpPower; 
+                    player.canDoubleJump = false; 
+                    glitchTimer = 10;
+                    gameContainer.classList.add('glitch-effect');
+                }
+                actions.jumpPressed = false; 
+            }
+
+            if (player.y > killFloor) {
+                loadLevel(currentLevel);
+            }
+
+            if (checkCollision(player, goal)) {
+                currentLevel++;
+                loadLevel(currentLevel);
+            }
+
+            let targetCameraX = player.x - canvas.width / 3;
+            if (targetCameraX < 0) targetCameraX = 0;
+            cameraX += (targetCameraX - cameraX) * 0.1;
+
+            updateEffects();
+        }
+
+        function draw() {
+            ctx.fillStyle = '#222';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (glitchTimer > 0) {
+                ctx.fillStyle = Math.random() > 0.5 ? '#FF003C' : '#00E1FF';
+                ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 200, Math.random() * 20);
+            }
+
+            ctx.save();
+            ctx.translate(-cameraX, 0);
+
+            platforms.forEach(p => {
+                ctx.fillStyle = '#444';
+                ctx.strokeStyle = '#00FFCC';
+                ctx.lineWidth = 2;
+                ctx.fillRect(p.x, p.y, p.w, p.h);
+                ctx.strokeRect(p.x, p.y, p.w, p.h);
+                
+                ctx.beginPath();
+                for(let i = 10; i < p.w; i+=20) {
+                    ctx.moveTo(p.x + i, p.y);
+                    ctx.lineTo(p.x + i - 10, p.y + p.h);
+                }
+                ctx.strokeStyle = '#333';
+                ctx.stroke();
+            });
+
+            if (goalImg.complete) {
+                ctx.drawImage(goalImg, goal.x, goal.y, goal.w, goal.h);
+            }
+
+            if (playerImg.complete) {
+                let px = player.x;
+                let py = player.y;
+                if (glitchTimer > 0) {
+                    px += (Math.random() - 0.5) * 10;
+                    py += (Math.random() - 0.5) * 10;
+                }
+                ctx.drawImage(playerImg, px, py, player.w, player.h);
+                
+                if(!player.grounded && player.canDoubleJump) {
+                    ctx.strokeStyle = "rgba(0, 255, 204, 0.5)";
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(px - 4, py - 4, player.w + 8, player.h + 8);
+                }
+                
+                // Petit indicateur visuel (contour rouge) si le mode Drag est activé
+                if (window.DragCharacter) {
+                    ctx.strokeStyle = "#FF003C";
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(px - 2, py - 2, player.w + 4, player.h + 4);
+                }
+            }
+
+            ctx.restore();
+
+            // UI
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(canvas.width / 2 - 80, 10, 160, 40);
+            ctx.fillStyle = '#00FFCC';
+            ctx.font = 'bold 20px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(`NIVEAU ${currentLevel + 1}/10`, canvas.width / 2, 37);
+
+            // Petit texte d'aide si le mode Drag est actif
+            if (window.DragCharacter) {
+                ctx.fillStyle = '#FF003C';
+                ctx.font = '14px Courier New';
+                ctx.textAlign = 'left';
+                ctx.fillText("Mode DRAG actif : Attrapez le joueur à la souris", 20, canvas.height - 20);
+            }
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+    </script>
+</body>
+</html>
