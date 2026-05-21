@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoJo's Bizarre Codex</title>
+    <style>
+        /* --- DESIGN SYSTEM JOJO --- */
+        :root {
+            --bg-principal: #0b0114; /* Ultra sombre */
+            --bg-carte: linear-gradient(135deg, #1c0035 0%, #0a0015 100%);
+            --texte-principal: #ffffff;
+            --or-jojo: #f1c40f; 
+            --rose-fluo: #ff007f;
+            --turquoise: #00f3ff;
+            --vert-deguise: #2ecc71;
+            --police-titre: 'Impact', 'Arial Black', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texte-principal);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            transition: filter 0.5s ease-in-out;
+            padding: 20px;
+        }
+
+        /* --- EFFET COLOR SHIFT (ZA WARUDO) --- */
+        body.color-shift {
+            filter: invert(1) hue-rotate(180deg) contrast(1.3);
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        h1 {
+            font-family: var(--police-titre);
+            font-size: 4rem;
+            text-transform: uppercase;
+            color: var(--or-jojo);
+            text-shadow: 4px 4px 0px var(--rose-fluo), -3px -3px 0px var(--turquoise);
+            letter-spacing: 2px;
+        }
+
+        .menacing {
+            color: var(--rose-fluo);
+            font-weight: bold;
+            font-size: 1.3rem;
+            letter-spacing: 4px;
+            margin-top: 5px;
+        }
+
+        /* --- BOUTON INTERACTIF --- */
+        .btn-shift {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 35px;
+            font-family: var(--police-titre);
+            font-size: 1.3rem;
+            background-color: var(--rose-fluo);
+            color: white;
+            border: 3px solid var(--or-jojo);
+            cursor: pointer;
+            box-shadow: 5px 5px 0px #000;
+            transition: 0.2s;
+        }
+
+        .btn-shift:hover {
+            background-color: var(--turquoise);
+            color: #000;
+            transform: translate(-2px, -2px);
+            box-shadow: 7px 7px 0px #000;
+        }
+
+        /* --- BARRE DE NAVIGATION DES PARTIES --- */
+        .nav-parties {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 10px;
+        }
+
+        .btn-part {
+            background: #22003c;
+            color: #fff;
+            border: 2px solid var(--turquoise);
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-part.active, .btn-part:hover {
+            background: var(--or-jojo);
+            color: #000;
+            border-color: #fff;
+            transform: scale(1.05);
+        }
+
+        /* --- GRILLE DES PERSONNAGES --- */
+        .container-cartes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 5px;
+        }
+
+        .carte {
+            background: var(--bg-carte);
+            border-radius: 8px;
+            width: 280px;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+            transition: transform 0.3s, border-color 0.3s;
+            display: block; 
+            cursor: pointer; /* Indique qu'on peut cliquer */
+        }
+
+        /* Distinction Visuelle Héros vs Ennemi */
+        .carte.hero { border: 4px solid var(--turquoise); }
+        .carte.villain { border: 4px solid var(--rose-fluo); }
+        /* Bordure spéciale pour Dragona */
+        .carte.goat { border: 4px dashed var(--or-jojo); animation: pulseBorder 2s infinite alternate; }
+
+        .carte:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        .img-container {
+            width: 100%;
+            height: 320px;
+            background-color: #111;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+
+        .carte:hover .img-container img {
+            transform: scale(1.06);
+        }
+
+        /* Badges d'alignement et Onomatopées */
+        .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 3px;
+            z-index: 2;
+        }
+        .hero .badge { background-color: var(--turquoise); color: #000; }
+        .villain .badge { background-color: var(--rose-fluo); color: #fff; }
+        .goat .badge { background-color: var(--or-jojo); color: #000; }
+
+        .onomatopee {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-family: var(--police-titre);
+            font-size: 1.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-shadow: 2px 2px 0px #000;
+            z-index: 2;
+        }
+
+        /* Informations et Descriptions */
+        .infos {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .part-tag {
+            font-size: 0.75rem;
+            color: var(--or-jojo);
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .nom {
+            font-family: var(--police-titre);
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+        .hero .nom { color: #fff; }
+        .villain .nom { color: #ffccd8; }
+        .goat .nom { color: var(--or-jojo); text-shadow: 1px 1px 0 var(--rose-fluo); }
+
+        .pouvoir {
+            font-size: 0.95rem;
+            color: #b3a2c7;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        .pouvoir span {
+            color: var(--or-jojo);
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        .description {
+            font-size: 0.85rem;
+            color: #d1c7de;
+            line-height: 1.3;
+            border-top: 1px dashed rgba(255,255,255,0.1);
+            padding-top: 8px;
+        }
+
+        /* --- MODAL PLEIN ÉCRAN (ZA WARUDO LIGHTBOX) --- */
+        .modal-fullscreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(6, 1, 13, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 75vh;
+            border: 5px solid var(--or-jojo);
+            box-shadow: 0 0 35px var(--rose-fluo);
+            border-radius: 10px;
+            object-fit: contain;
+            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-nom {
+            font-family: var(--police-titre);
+            font-size: 2.5rem;
+            color: var(--turquoise);
+            margin-top: 15px;
+            text-shadow: 3px 3px 0px var(--rose-fluo);
+            text-transform: uppercase;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 3rem;
+            color: var(--rose-fluo);
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .close-modal:hover {
+            color: var(--or-jojo);
+            transform: scale(1.2);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes pulseBorder {
+            0% { border-color: var(--or-jojo); box-shadow: 0 0 5px var(--or-jojo); }
+            100% { border-color: var(--rose-fluo); box-shadow: 0 0 15px var(--rose-fluo); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>JoJo's Bizarre Codex</h1>
+        <div class="menacing">ゴゴゴゴ CLIQUEZ SUR UN PERSO POUR LE ZOOM PLEIN ÉCRAN ゴゴゴゴ</div>
+    </header>
+
+    <button class="btn-shift" id="shiftBtn">COLOR SHIFT EFFECT</button>
+
+    <nav class="nav-parties">
+        <button class="btn-part active" onclick="filtrerPartie('all')">Tous</button>
+        <button class="btn-part" onclick="filtrerPartie('p1')">Part 1</button>
+        <button class="btn-part" onclick="filtrerPartie('p2')">Part 2</button>
+        <button class="btn-part" onclick="filtrerPartie('p3')">Part 3</button>
+        <button class="btn-part" onclick="filtrerPartie('p4')">Part 4</button>
+        <button class="btn-part" onclick="filtrerPartie('p5')">Part 5</button>
+        <button class="btn-part" onclick="filtrerPartie('p6')">Part 6</button>
+        <button class="btn-part" onclick="filtrerPartie('p7')">Part 7</button>
+        <button class="btn-part" onclick="filtrerPartie('p8')">Part 8</button>
+        <button class="btn-part" onclick="filtrerPartie('p9')">Part 9</button>
+    </nav>
+
+    <main class="container-cartes">
+
+        <div class="carte hero" data-part="p1">
+            <div class="img-container">
+                <span class="badge">Héros</span>
+                <span class="onomatopee">ゴゴゴ</span>
+                <img src="https://static.jojowiki.com/images/thumb/b/bd/latest/20221006234855/Jonathan_Infobox_Manga.png/800px-Jonathan_Infobox_Manga.png" alt="Jonathan">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 1: Phantom Blood</div>
+                <div class="nom">Jonathan Joestar</div>
+                <div class="pouvoir">Aptitude : <span>Onde / Hamon</span></div>
+                <p class="description">Le premier JoJo de l'histoire. Incarnation parfaite du gentleman britannique, il se bat avec honneur pour stopper la folie de son frère adoptif, Dio.</p>
+            </div>
+        </div>
+
+        <div class="carte villain" data-part="p1">
+            <div class="img-container">
+                <span class="badge">Antagoniste</span>
+                <span class="onomatopee">KONO DIO DA!</span>
+                <img src="https://static.wikia.nocookie.net/jjba/images/e/e1/Dio_Brando_%28anime%29.png/revision/latest/scale-to-width/360?cb=20200603050045&path-prefix=fr" alt="Dio Brando">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 1: Phantom Blood</div>
+                <div class="nom">Dio Brando</div>
+                <div class="pouvoir">Pouvoir : <span>Vampirisme</span></div>
+                <p class="description">Ambitieux, cruel et machiavélique. En rejetant son humanité grâce au masque de pierre, il devient un vampire immortel assoiffé de pouvoir.</p>
+            </div>
+        </div>
+
+        <div class="carte hero" data-part="p2">
+            <div class="img-container">
+                <span class="badge">Héros</span>
+                <span class="onomatopee">HELL NO</span>
+                <img src="https://static.wikia.nocookie.net/jjba/images/4/44/Joseph_anime_part2.png/revision/latest/scale-to-width/360?cb=20140510163402&path-prefix=fr" alt="Joseph">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 2: Battle Tendency</div>
+                <div class="nom">Joseph Joestar</div>
+                <div class="pouvoir">Aptitude : <span>Hamon / Malice</span></div>
+                <p class="description">Le petit-fils de Jonathan. Drôle, arrogant et tacticien hors pair. Sa spécialité ? Deviner la réplique exacte que son adversaire va prononcer.</p>
+            </div>
+        </div>
+
+        <div class="carte villain" data-part="p2">
+            <div class="img-container">
+                <span class="badge">Antagoniste</span>
+                <span class="onomatopee">AWAKEN</span>
+                <img src="https://static.wikia.nocookie.net/jjba/images/3/3a/Kars_sun.png/revision/latest?cb=20160521003039" alt="Kars">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 2: Battle Tendency</div>
+                <div class="nom">Kars</div>
+                <div class="pouvoir">Pouvoir : <span>Forme Ultime</span></div>
+                <p class="description">Le créateur des masques de pierre et le plus puissant des Hommes du Pilier. Son but est de devenir l'être vivant ultime et de dominer le soleil.</p>
+            </div>
+        </div>
+
+        <div class="carte hero" data-part="p3">
+            <div class="img-container">
+                <span class="badge">Héros</span>
+                <span class="onomatopee">ORA ORA</span>
+                <img src="https://m.media-amazon.com/images/I/71sphppoOTL._AC_UF1000,1000_QL80_.jpg" alt="Jotaro">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 3: Stardust Crusaders</div>
+                <div class="nom">Jotaro Kujo</div>
+                <div class="pouvoir">Stand : <span>Star Platinum</span></div>
+                <p class="description">Le délinquant au cœur d'or et sans doute le JoJo le plus emblématique. Son Stand possède une vitesse et une puissance de frappe brute destructrice.</p>
+            </div>
+        </div>
+
+        <div class="carte villain" data-part="p3">
+            <div class="img-container">
+                <span class="badge">Antagoniste</span>
+                <span class="onomatopee">MUDA MUDA</span>
+                <img src="https://preview.redd.it/how-does-dio-always-manage-to-strike-the-hardest-pose-when-v0-gcn2jf9hjejd1.jpeg?auto=webp&s=aaf3f72e23e1015e791e8caef9be198f52095dbf" alt="DIO">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 3: Stardust Crusaders</div>
+                <div class="nom">DIO BRANDO</div>
+                <div class="pouvoir">Stand : <span>The World</span></div>
+                <p class="description">De retour après un siècle au fond de l'océan avec le corps de Jonathan. Son Stand, capable de figer le temps, en fait une menace quasi divine.</p>
+            </div>
+        </div>
+
+        <div class="carte hero" data-part="p4">
+            <div class="img-container">
+                <span class="badge">Héros</span>
+                <span class="onomatopee">DORARA</span>
+                <img src="https://static.wikia.nocookie.net/jjba/images/1/1f/JosukeAnime.png/revision/latest/scale-to-width/360?cb=20190801192818&path-prefix=fr" alt="Josuke 4">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 4: Diamond is Unbreakable</div>
+                <div class="nom">Josuke Higashikata</div>
+                <div class="pouvoir">Stand : <span>Crazy Diamond</span></div>
+                <p class="description">Fils caché de Joseph vivant à Morioh. Très sympa au quotidien, il entre dans une rage folle si quelqu'un a le malheur de critiquer sa coupe de cheveux de voyou.</p>
+            </div>
+        </div>
+
+        <div class="carte villain" data-part="p4">
+            <div class="img-container">
+                <span class="badge">Antagoniste</span>
+                <span class="onomatopee">KILLER</span>
+                <img src="https://static.wikia.nocookie.net/jjba/images/c/ca/Scarykira.png/revision/latest?cb=20140601063009" alt="Kira">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 4: Diamond is Unbreakable</div>
+                <div class="nom">Yoshikage Kira</div>
+                <div class="pouvoir">Stand : <span>Killer Queen</span></div>
+                <p class="description">Un tueur en série fétichiste des mains qui se cache sous l'apparence d'un employé de bureau ordinaire. Il désire plus que tout vivre une existence tranquille.</p>
+            </div>
+        </div>
+
+        <div class="carte hero" data-part="p5">
+            <div class="img-container">
+                <span class="badge">Héros</span>
+                <span class="onomatopee">MUDA MUDA</span>
+                <img src="https://preview.redd.it/giorno-giovanna-is-genuinely-such-a-cool-name-to-have-v0-0xnfl9o753qf1.jpeg?width=640&crop=smart&auto=webp&s=e8358ab0509af91b4f838fa0bc34d7e0ddde991b" alt="Giorno">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 5: Golden Wind</div>
+                <div class="nom">Giorno Giovanna</div>
+                <div class="pouvoir">Stand : <span>Gold Experience</span></div>
+                <p class="description">Fils biologique de DIO (mais avec les gènes des Joestar). Il intègre la mafia italienne Passione avec un but précis : grimper les échelons pour protéger les innocents.</p>
+            </div>
+        </div>
+
+        <div class="carte villain" data-part="p5">
+            <div class="img-container">
+                <span class="badge">Antagoniste</span>
+                <span class="onomatopee">CRIMSON</span>
+                <img src="https://i.pinimg.com/564x/6e/5e/62/6e5e62a524ceaf34e3aa77a9dc131011.jpg" alt="Diavolo">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 5: Golden Wind</div>
+                <div class="nom">Diavolo</div>
+                <div class="pouvoir">Stand : <span>King Crimson</span></div>
+                <p class="description">Le mystérieux parrain de Passione souffrant d'un trouble de la personnalité. Son Stand surpuissant efface littéralement le temps pour altérer le destin.</p>
+            </div>
+        </div>
+
+        <div class="carte hero" data-part="p6">
+            <div class="img-container">
+                <span class="badge">Héros</span>
+                <span class="onomatopee">ORA ORA</span>
+                <img src="https://upload.wikimedia.org/wikipedia/en/8/84/Jolyne_Cujoh.png" alt="Jolyne">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 6: Stone Ocean</div>
+                <div class="nom">Jolyne Cujoh</div>
+                <div class="pouvoir">Stand : <span>Stone Free</span></div>
+                <p class="description">La fille de Jotaro Kujo. Enfermée à tort dans une prison de haute sécurité en Floride, elle apprend à maîtriser son Stand de fils pour déjouer un complot cosmique.</p>
+            </div>
+        </div>
+
+        <div class="carte villain" data-part="p6">
+            <div class="img-container">
+                <span class="badge">Antagoniste</span>
+                <span class="onomatopee">HEAVEN</span>
+                <img src="https://static.wikia.nocookie.net/jjba/images/3/3d/PucciNewMoonManga.PNG/revision/latest/scale-to-width-down/270?cb=20221030015309" alt="Pucci">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 6: Stone Ocean</div>
+                <div class="nom">Enrico Pucci</div>
+                <div class="pouvoir">Stand : <span>Made in Heaven</span></div>
+                <p class="description">Aumônier de la prison et disciple fanatique de DIO. Il cherche à appliquer le plan ultime de son maître pour réinitialiser l'univers et guider l'humanité vers son destin.</p>
+            </div>
+        </div>
+
+        <div class="carte hero" data-part="p7">
+            <div class="img-container">
+                <span class="badge">Héros</span>
+                <span class="onomatopee">CHUMIMIN</span>
+                <img src="https://cdn.anisearch.fr/images/character/cover/61/61148_400.webp" alt="Johnny">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 7: Steel Ball Run</div>
+                <div class="nom">Johnny Joestar</div>
+                <div class="pouvoir">Stand : <span>Tusk (Act 1-4)</span></div>
+                <p class="description">Ancien jockey prodige devenu paraplégique. Dans cette réalité alternative, il participe à une course de chevaux à travers l'Amérique pour percer le secret de la rotation.</p>
+            </div>
+        </div>
+
+        <div class="carte villain" data-part="p7">
+            <div class="img-container">
+                <span class="badge">Antagoniste</span>
+                <span class="onomatopee">D4C</span>
+                <img src="https://static.wikia.nocookie.net/jjba/images/2/22/FunnyValentine.PNG/revision/latest/thumbnail/width/360/height/360?cb=20190811215345&path-prefix=fr" alt="Valentine">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 7: Steel Ball Run</div>
+                <div class="nom">Funny Valentine</div>
+                <div class="pouvoir">Stand : <span>D4C</span></div>
+                <p class="description">Le 23e président des États-Unis. Guidé par un patriotisme extrême sans aucune limite morale, son Stand lui permet de voyager à travers les dimensions parallèles.</p>
+            </div>
+        </div>
+
+        <div class="carte hero" data-part="p8">
+            <div class="img-container">
+                <span class="badge">Héros</span>
+                <span class="onomatopee">ORA ORA</span>
+                <img src="https://pbs.twimg.com/media/EzbVIXVWYAEV2Jl.jpg" alt="Gappy">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 8: JoJolion</div>
+                <div class="nom">Josuke (Gappy)</div>
+                <div class="pouvoir">Stand : <span>Soft & Wet</span></div>
+                <p class="description">Un jeune homme retrouvé amnésique dans les décombres du séisme de Morioh. Il possède d'étranges particularités physiques et vole des propriétés grâce à ses bulles.</p>
+            </div>
+        </div>
+
+        <div class="carte villain" data-part="p8">
+            <div class="img-container">
+                <span class="badge">Antagoniste</span>
+                <span class="onomatopee">CALAMITY</span>
+                <img src="https://preview.redd.it/whats-so-good-about-tooru-v0-knbtzk2qni4b1.jpg?width=640&crop=smart&auto=webp&s=ad0dfb224ca5394c3ac553b74572d7ac6d0550ad" alt="Tooru">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 8: JoJolion</div>
+                <div class="nom">Tooru</div>
+                <div class="pouvoir">Stand : <span>Wonder of U</span></div>
+                <p class="description">Un Homme de Pierre dissimulé parmi les humains. Son Stand manipule le concept même de la "calamité" : quiconque tente de le poursuivre subit des accidents mortels.</p>
+            </div>
+        </div>
+
+        <div class="carte hero" data-part="p9">
+            <div class="img-container">
+                <span class="badge">Héros</span>
+                <span class="onomatopee">RAIN</span>
+                <img src="https://static.wikia.nocookie.net/jjba/images/c/c9/November_Rain.png/revision/latest/scale-to-width-down/250?cb=20241207173758" alt="Jodio">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 9: TheJoJoLands</div>
+                <div class="nom">Jodio Joestar</div>
+                <div class="pouvoir">Stand : <span>November Rain</span></div>
+                <p class="description">Le protagoniste de la partie 9. Vivant à Hawaï, ce jeune anti-héros pragmatique trempe dans le trafic pour accomplir son rêve ultime : devenir immensément riche.</p>
+            </div>
+        </div>
+
+        <div class="carte hero goat" data-part="p9">
+            <div class="img-container">
+                <span class="badge">👑 DRAGONA MA GOAT 👑</span>
+                <span class="onomatopee">SMOOTH</span>
+                <img src="https://static.jojowiki.com/images/thumb/6/65/latest/20231226223644/Dragona_Infobox_Manga.png/640px-Dragona_Infobox_Manga.png" alt="Dragona">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 9: TheJoJoLands</div>
+                <div class="nom">Dragona Joestar</div>
+                <div class="pouvoir">Stand : <span>Smooth Operators</span></div>
+                <p class="description"><strong>LA GOAT ABSOLUE DE LA PART 9 !</strong> Frère aîné et soutien inestimable de Jodio. Avec son style légendaire et son Stand capable de déplacer et glisser n'importe quelle propriété (plaques d'immatriculation, blessures ou visages), Dragona vole totalement la vedette !</p>
+            </div>
+        </div>
+
+        <div class="carte villain" data-part="p9">
+            <div class="img-container">
+                <span class="badge">Antagoniste</span>
+                <span class="onomatopee">HOWLER</span>
+                <img src="https://static.wikia.nocookie.net/ninjajojos-bizarre-adventure/images/e/e5/Acca_Howler_P9_Infobox.png/revision/latest/thumbnail/width/360/height/360?cb=20250704153804" alt="Ennemis Part 9">
+            </div>
+            <div class="infos">
+                <div class="part-tag">Part 9: TheJoJoLands</div>
+                <div class="nom">Howler / Ennemis</div>
+                <div class="pouvoir">Menace : <span>Mécanismes de Terre</span></div>
+                <p class="description">La puissante corporation Howler et les forces de l'île qui se dressent sur la route du gang de Jodio pour le contrôle des précieuses ressources hawaïennes.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="jojoModal" class="modal-fullscreen">
+        <span class="close-modal" id="closeModal">&times;</span>
+        <img class="modal-content" id="modalImg" src="" alt="Zoom Perso">
+        <div class="modal-nom" id="modalNom"></div>
+    </div>
+
+    <script>
+        // 1. Fonctionnalité Color Shift (Za Warudo / Ambiance)
+        const shiftBtn = document.getElementById('shiftBtn');
+        shiftBtn.addEventListener('click', () => {
+            document.body.classList.toggle('color-shift');
+            if (document.body.classList.contains('color-shift')) {
+                shiftBtn.textContent = "ZA WARUDO ! (Normal Mode)";
+            } else {
+                shiftBtn.textContent = "COLOR SHIFT EFFECT";
+            }
+        });
+
+        // 2. Gestionnaire de Tri dynamique par Partie
+        function filtrerPartie(partId) {
+            const boutons = document.querySelectorAll('.btn-part');
+            boutons.forEach(btn => btn.classList.remove('active'));
+            
+            // Corrige la récupération de l'événement pour activer le bouton
+            if(window.event) {
+                window.event.target.classList.add('active');
+            }
+
+            const cartes = document.querySelectorAll('.carte');
+            cartes.forEach(carte => {
+                if (partId === 'all' || carte.getAttribute('data-part') === partId) {
+                    carte.style.display = "block"; 
+                } else {
+                    carte.style.display = "none";  
+                }
+            });
+        }
+
+        // 3. Système Lightbox Plein Écran (Au clic sur une carte)
+        const modal = document.getElementById('jojoModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalNom = document.getElementById('modalNom');
+        const closeModal = document.getElementById('closeModal');
+        const cartes = document.querySelectorAll('.carte');
+
+        cartes.forEach(carte => {
+            carte.addEventListener('click', () => {
+                const imgElement = carte.querySelector('.img-container img');
+                const nomElement = carte.querySelector('.nom');
+                
+                // On injecte la source de l'image et le nom dans la modal
+                modalImg.src = imgElement.src;
+                modalNom.textContent = nomElement.textContent;
+                
+                // On affiche la modal avec Flexbox
+                modal.style.display = "flex";
+                document.body.style.overflow = "hidden"; // Bloque le défilement arrière
+            });
+        });
+
+        // Fermer au clic sur le bouton de fermeture X
+        closeModal.addEventListener('click', () => {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto"; // Réactive le défilement
+        });
+
+        // Fermer la modal si on clique n'importe où en dehors de l'image zoomée
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto";
+            }
+        });
+    </script>
+</body>
+</html>
