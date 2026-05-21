@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Base de données étendue des spécimens de requins.">
+    <title>SharkPedia</title>
+    <style>
+        :root {
+            --amai-bg: #f7f4ea; 
+            --amai-dark: #1a1a1a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--amai-bg);
+            color: var(--amai-dark);
+            font-family: 'Consolas', 'Courier New', monospace;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.05));
+            background-size: 100% 6px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .section-amai {
+            position: relative;
+            min-height: 100vh;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+            background-color: var(--amai-bg);
+            color: var(--amai-dark);
+            overflow: hidden;
+        }
+
+        .grid-floor-amai {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.07) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.07) 2px, transparent 2px);
+            background-size: 40px 40px;
+            z-index: -1;
+            animation: grid-move 4s infinite linear reverse;
+        }
+
+        @keyframes grid-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .amai-title {
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: 5px;
+            color: var(--amai-dark);
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+        }
+
+        .amai-subtitle {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px dashed var(--amai-dark);
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            background: #fff;
+            color: var(--amai-dark);
+            border: 3px solid var(--amai-dark);
+            box-shadow: 4px 4px 0px var(--amai-dark);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--amai-dark);
+        }
+
+        .shark-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+
+        .shark-card {
+            background: #fff;
+            border: 3px solid var(--amai-dark);
+            box-shadow: 5px 5px 0px var(--amai-dark);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s ease;
+        }
+        .shark-card.extinct .shark-habitat {
+            color: red;
+            border-color: red;
+        }
+        .shark-card:hover {
+            box-shadow: 9px 9px 0px rgba(0,0,0,0.3);
+            transform: translate(-4px, -4px);
+        }
+
+        .shark-img {
+            width: 100%;
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            border-bottom: 3px solid var(--amai-dark);
+        }
+
+        .shark-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .shark-name {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .shark-scientific {
+            font-size: 0.9rem;
+            color: #555;
+            font-style: italic;
+        }
+
+        .shark-habitat {
+            margin-top: auto;
+            font-size: 0.8rem;
+            background: var(--amai-bg);
+            border: 2px solid var(--amai-dark);
+            padding: 6px 10px;
+            font-weight: bold;
+            display: inline-block;
+            word-break: break-word;
+        }
+
+        /* --- EFFET BARRES 45° INVERSÉES--- */
+        .section-amai::before,
+        .section-amai::after {
+            content: '';
+            position: absolute;
+            width: 450px;
+            height: 90px;
+            background-color: #fff;
+            mix-blend-mode: difference;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .section-amai::before {
+            top: 60px;
+            left: -120px;
+            transform: rotate(-45deg);
+        }
+
+        .section-amai::after {
+            bottom: 60px;
+            right: -120px;
+            transform: rotate(-45deg);
+        }
+
+        .shark-card.blahaj-special {
+            border: 3px dashed var(--amai-dark);
+            background: #fffdf5;
+            animation: swim-subtle 4s ease-in-out infinite;
+        }
+
+        .shark-card.blahaj-special .shark-habitat {
+            background: #fff0f0;
+            border-style: dashed;
+        }
+
+        @keyframes swim-subtle {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scanlines"></div>
+
+    <section class="section-amai">
+        <div class="grid-floor-amai"></div>
+
+        <header>
+            <h1 class="amai-title">SHARK_DATABASE</h1>
+            <div class="amai-subtitle">>> SYSTEM_STATUS: EXTENDED_ARCHIVE <<</div>
+            
+            <div class="search-container">
+                <input type="text" id="searchBar" class="search-input" placeholder="[ ENTRER_UN_NOM_OU_UN_HABITAT ]">
+            </div>
+        </header>
+
+        <div class="shark-grid" id="sharkGrid"></div>
+    </section>
+
+    <script>
+        const sharks = [
+            {
+                name: "Requin Bambou",
+                scientific: "Chiloscyllium punctatum",
+                habitat: "Récifs coralliens de la région Indo-Pacifique",
+                image: "https://www.auxbulles.com/img/requin-chabot-bambou-chiloscyllium-punctatum-03.jpg"
+            },
+            {
+                name: "Grand Requin Blanc",
+                scientific: "Carcharodon carcharias",
+                habitat: "Eaux côtières et tempérées mondiales",
+                image: "https://cdn8.futura-sciences.com/sources/images/grand-blanc-carcharodon-carcharias_hermanusbackpackers-Flickr.jpg"
+            },
+            {
+                name: "Requin Baleine",
+                scientific: "Rhincodon typus",
+                habitat: "Océans tropicaux et mers chaudes pelagiques",
+                image: "https://subocea.com/uploads/media/image/5ba4f047306fd807465c1f59cc7d6c0a.jpg"
+            },
+            {
+                name: "Requin Marteau Halicorne",
+                scientific: "Sphyrna lewini",
+                habitat: "Eaux côtières tropicales et tempérées chaudes",
+                image: "https://divingaway.com/Images/FAUNE-232-1958/Voir-Observer-Nager-Plonger-Snorkeling-Requin_marteau_halicorne-Divingaway"
+            },
+            {
+                name: "Requin Marteau Commun",
+                scientific: "Sphyrna zygaena",
+                habitat: "Eaux côtières et pélagiques tempérées et tropicales",
+                image: "https://images.squarespace-cdn.com/content/v1/5de7ab07465f7953ae1b53db/10dfafde-89c7-404f-a76b-8f1cfcf43ca9/Andy_Murch_Smooth_Hammerhead.png"
+            },
+            {
+                name: "Requin Tigre",
+                scientific: "Galeocerdo cuvier",
+                habitat: "Écosystèmes côtiers et océaniques tropicaux",
+                image: "https://circle.b-cdn.net//photos/news/tigerblog12_58c93__lg.jpg"
+            },
+            {
+                name: "Requin Bouledogue",
+                scientific: "Carcharhinus leucas",
+                habitat: "Eaux côtières, estuaires et rivières d'eau douce",
+                image: "https://lemagdesanimaux.ouest-france.fr/images/dossiers/2023-10/mini/requin-bouledogue-061633-1200-738.jpg"
+            },
+            {
+                name: "Requin Mako",
+                scientific: "Isurus oxyrinchus",
+                habitat: "Eaux tempérées et tropicales du large (pélagique)",
+                image: "https://animauxmarins.fr/wp-content/uploads/2021/03/ancetre-requin-blanc.png"
+            },
+            {
+                name: "Requin Pèlerin",
+                scientific: "Cetorhinus maximus",
+                habitat: "Eaux tempérées froides des deux hémisphères",
+                image: "https://www.radiofrance.fr/pikapi/images/49645ffd-bac2-4ba3-85a3-f2451c969dac/2048"
+            },
+            {
+                name: "Requin Renard",
+                scientific: "Alopias vulpinus",
+                habitat: "Océans tropicaux et tempérés, souvent en haute mer",
+                image: "https://animauxmarins.fr/wp-content/uploads/2022/05/requin-renard-alopias.jpg"
+            },
+            {
+                name: "Requin Nourrice",
+                scientific: "Ginglymostoma cirratum",
+                habitat: "Fonds marins des récifs de l'Atlantique et Pacifique",
+                image: "https://www.aquariumbiarritz.com/wp-content/uploads/2025/06/requin-nourrice.jpg"
+            },
+            {
+                name: "Requin Citron",
+                scientific: "Negaprion brevirostris",
+                habitat: "Eaux côtières peu profondes des récifs et mangroves",
+                image: "https://bioobs.fr/blog/src/mes_photos/user_4869/2F4878F7-F350-F1A5-8182-24DE2452024C/00027.jpg"
+            },
+            {
+                name: "Requin Léopard",
+                scientific: "Triakis semifasciata",
+                habitat: "Côtes est du Pacifique, baies sablonneuses et estuaires",
+                image: "https://images.lindependant.fr/api/v1/images/view/67604e7b0d6e1766df5f9b6a/large/image.webp?v=1"
+            },
+            {
+                name: "Requin du Groenland",
+                scientific: "Somniosus microcephalus",
+                habitat: "Eaux arctiques et abysses extrêmement froides",
+                image: "https://animauxmarins.fr/wp-content/uploads/2022/03/requin-du-groenland.jpg"
+            },
+            {
+                name: "Requin-Tapis Barbu",
+                scientific: "Eucrossorhinus dasypogon",
+                habitat: "Récifs coralliens de l'Australie du Nord et Nouvelle-Guinée",
+                image: "https://d3e1m60ptf1oym.cloudfront.net/ddb71b1e-d9bd-4752-85d6-3babd205e971/07165_NT_8015_uxga.jpg"
+            },
+            {
+                name: "Requin Lézard",
+                scientific: "Chlamydoselachus anguineus",
+                habitat: "Zones benthiques et abysses profonds (1500m)",
+                image: "https://www.bordabord.org/wp-content/uploads/2019/05/Requin-l%C3%A9zard-on-vous-parle-de-ce-requin-pr%C3%A9historique.jpg"
+            },
+            {
+                name: "Requin Lutin",
+                scientific: "Mitsukurina owstoni",
+                habitat: "Canyons sous-marins profonds du monde entier",
+                image: "https://requin-lutin.fr/wp-content/uploads/2026/04/Capture-decran-2026-04-12-a-15.34.43-1024x511.png"
+            },
+            {
+                name: "Requin Zèbre",
+                scientific: "Stegostoma tigrinum",
+                habitat: "Récifs coralliens de la région Indo-Pacifique",
+                image: "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1920,fit=crop/m2WBB6n1W2FLvxB6/dsc07774-meP56n9KpBfpLjJX.JPG"
+            },
+            {
+                name: "Requin Bleu",
+                scientific: "Prionace glauca",
+                habitat: "Tous les océans tempérés et tropicaux, pélagique",
+                image: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Prionace_glauca_1.jpg?utm_source=fr.wikipedia.org&utm_campaign=index&utm_content=original"
+            },
+            {
+                name: "Requin Pointe Noire",
+                scientific: "Carcharhinus melanopterus",
+                habitat: "Lagons et récifs Indo-Pacifique, eaux peu profondes",
+                image: "https://www.aquariumbcn.com/wp-content/uploads/2022/07/Carcharhinus-melanopterus.jpg"
+            },
+            {
+                name: "Requin Taureau",
+                scientific: "Carcharias taurus",
+                habitat: "Côtes tempérées, fonds sablonneux",
+                image: "https://www.aquaportail.com/aquabdd/photos/carcharias-taurus.webp"
+            },
+            {
+                name: "Requin Cornu de Californie",
+                scientific: "Heterodontus francisci",
+                habitat: "Fonds rocheux et algues de la côte californienne",
+                image: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Heterodontus_francisci_catalina.jpg?utm_source=fr.wikipedia.org&utm_campaign=index&utm_content=original"
+            },
+            {
+                name: "Requin à Pointes Noires",
+                scientific: "Carcharhinus limbatus",
+                habitat: "Eaux côtières tropicales et subtropicales mondiales",
+                image: "https://s3.animalia.bio/animals/photos/medium/original/carcharhinus-limbatus-in-ushaka-sea-world-1072.webp?id=8de6f1757238a96bc957507ab6c699b4"
+            },
+            {
+                name: "Requin Gris de Récif",
+                scientific: "Carcharhinus amblyrhynchos",
+                habitat: "Récifs coralliens Indo-Pacifique, eaux peu profondes",
+                image: "https://www.repro-tableaux.com/kunst/ilan_bentov/grauer_riffhai_carcharhinus_amblyrhynchos_1285413.jpg"
+            },
+            {
+                name: "Requin-Scie",
+                scientific: "Pristiophorus cirratus",
+                habitat: "Fonds sablonneux côtiers d'Australie et Afrique du Sud",
+                image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhIBEHsKRBZHiGkRhZpCVpfSOFq_sS8Wju89UB1_3Y6MN5TlYiFh0Od-fORZ5yZv7GIJg3L7Hrg8ZhkS8cD3n3VYi2ATcsf3j6QMxBAVXjF3OhFXS78lE77FP_LaSW2Rkw07Q3dmdtMvjcY/s1600/Longnose+Sawshark.jpg"
+            },
+            {
+                name: "Requin Pygmée",
+                scientific: "Euprotomicrus bispinatus",
+                habitat: "Haute mer tropicale et subtropicale, grandes profondeurs",
+                image: "https://nplimages.infradoxxs.com/cache/pcache2/01534172.jpg"
+            },
+            {
+                name: "Requin Lanterne",
+                scientific: "Etmopterus spinax",
+                habitat: "Profondeurs de l'Atlantique Est et Méditerranée, bioluminescent",
+                image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8ZtLHVM3VRgrQPzunBqfGn-bXvRK_U1rfCuTRV7uxrWIWadKAm6Fz6HJZ78OSt7c0_fRvzLhXc2p9nHgfc4StrK79EOG3UmyBvh5QYQ&s=10"
+            },
+            {
+                name: "Requin Océanique à Pointes Blanches",
+                scientific: "Carcharhinus longimanus",
+                habitat: "Haute mer tropicale et subtropicale",
+                image: "https://sharks-mission.fr/wp-content/uploads/2013/05/Carcharhinus_longimanus_1.jpg"
+            },
+            {
+                name: "Requin Soyeux",
+                scientific: "Carcharhinus falciformis",
+                habitat: "Eaux tropicales pélagiques, souvent en bancs",
+                image: "https://www.fishipedia.fr/wp-content/uploads/2019/07/SOYEUX_AK1A0062_FGUERIN.jpg"
+            },
+            {
+                name: "Requin Pointe Blanche de Récif",
+                scientific: "Triaenodon obesus",
+                habitat: "Récifs coralliens Indo-Pacifique",
+                image: "https://www.fishipedia.it/wp-content/uploads/2023/11/Triaenodon-obesus.jpg"
+            },
+            {
+                name: "Ange de Mer",
+                scientific: "Squatina squatina",
+                habitat: "Fonds sablonneux de l'Atlantique Nord et Méditerranée",
+                image: "https://www.fishipedia.it/wp-content/uploads/2020/09/Squatina-squatina.jpg"
+            },
+            {
+                name: "Aiguillat Commun",
+                scientific: "Squalus acanthias",
+                habitat: "Atlantique Nord et Manche, eaux tempérées côtières",
+                image: "https://geerg.ca/wp-content/uploads/2023/06/Squalus_acanthias_1.jpg"
+            },
+            {
+                name: "Requin Wobbegong",
+                scientific: "Orectolobus maculatus",
+                habitat: "Fonds rocheux et coralliens d'Australie",
+                image: "https://stock.wikimini.org/w/images/thumb/6/6e/Spotted_Wobbegong-Orectolobus_maculatus-requin-tapis.jpg/800px-Spotted_Wobbegong-Orectolobus_maculatus-requin-tapis.jpg"
+            },
+
+            {
+                name: "Blåhaj",
+                scientific: "Sharkus Ikeus / Peluchis Amicus",
+                habitat: "Chez IKEA ou dans ma chambre",
+                image: "https://assets.newsweek.com/wp-content/uploads/2025/08/2137039-ikeas-blahaj-shark.jpg?w=1600&quality=80&webp=1",
+                isBlahaj: true
+            },
+
+            {
+                name: "Stethacanthus",
+                scientific: "Stethacanthus altonensis",
+                habitat: "Mers peu profondes — ESPÈCE ÉTEINTE (il y a ~345 Ma)",
+                image: "https://static.wikia.nocookie.net/prehistoric-earth-a-natural-history/images/1/15/CGTPL_Stethacanthus.webp/revision/latest?cb=20230315162626",
+                isExtinct: true
+            },
+            {
+                name: "Cladoselache",
+                scientific: "Cladoselache fyleri",
+                habitat: "Mers peu profondes — ESPÈCE ÉTEINTE (il y a ~370 Ma)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/2/23/Cladoselache_NT_small.jpg",
+                isExtinct: true
+            },
+            {
+                name: "Edestus",
+                scientific: "Edestus giganteus",
+                habitat: "Océans mondiaux — ESPÈCE ÉTEINTE (il y a ~300 Ma)",
+                image: "https://static.wikia.nocookie.net/prehistoric-wiki/images/6/62/Edestus.jpg/revision/latest?cb=20210130133444",
+                isExtinct: true
+            },
+            {
+                name: "Helicoprion",
+                scientific: "Helicoprion bessonowi",
+                habitat: "Océans mondiaux — ESPÈCE ÉTEINTE (il y a ~290 Ma)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Helicoprion_bessonovi1DB.jpg/330px-Helicoprion_bessonovi1DB.jpg",
+                isExtinct: true
+            },
+            {
+                name: "Cretoxyrhina",
+                scientific: "Cretoxyrhina mantelli",
+                habitat: "Mers du Crétacé — ESPÈCE ÉTEINTE (il y a ~100 Ma)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/2/29/Cretoxyrhina_mantelli_21DB.jpg?utm_source=fr.wikipedia.org&utm_campaign=index&utm_content=original",
+                isExtinct: true
+            },
+            {
+                name: "Squalicorax",
+                scientific: "Squalicorax falcatus",
+                habitat: "Mers peu profondes du Crétacé — ESPÈCE ÉTEINTE (il y a ~80 Ma)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Squalicorax2DB.jpg/500px-Squalicorax2DB.jpg",
+                isExtinct: true
+            },
+            {
+                name: "Otodus obliquus",
+                scientific: "Otodus obliquus",
+                habitat: "Océans mondiaux — ESPÈCE ÉTEINTE (il y a ~55 Ma)",
+                image: "https://i.redd.it/gst7epuih67b1.jpg",
+                isExtinct: true
+            },
+            {
+                name: "Isurus hastalis",
+                scientific: "Isurus hastalis",
+                habitat: "Océans mondiaux — ESPÈCE ÉTEINTE (il y a ~10 Ma)",
+                image: "https://1ef38d0c.delivery.rocketcdn.me/wp-content/uploads/2023/08/isurus-1024x424.webp",
+                isExtinct: true
+            },
+            {
+                name: "Mégalodon",
+                scientific: "Otodus megalodon",
+                habitat: "Océans mondiaux — ESPÈCE ÉTEINTE (il y a ~3,6 Ma)",
+                image: "https://media.australian.museum/media/dd/images/25492412528_7e152c7e73_b.0d1e9ac.68a9a57.width-800.9b07bea.jpg",
+                isExtinct: true
+            },
+            {
+                "name": "Requin de Chine",
+                "scientific": "Carcharhinus obsoletus",
+                "habitat": "Mer de Chine méridionale — ESPÈCE ÉTEINTE (déclaré éteint en 2021)",
+                "image": "https://static.inaturalist.org/photos/21906877/medium.jpg",
+                "isExtinct": true
+            }
+        ];
+        
+        const sharkGrid = document.getElementById('sharkGrid');
+        const searchBar = document.getElementById('searchBar');
+
+        function displaySharks(sharksList) {
+            sharkGrid.innerHTML = "";
+
+            if(sharksList.length === 0) {
+                sharkGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>[ EXCEPTION: NO_SHARK_FOUND ]</p>";
+                return;
+            }
+
+            sharksList.forEach(shark => {
+                const card = document.createElement('div');
+                card.className = `shark-card ${shark.isBlahaj ? 'blahaj-special' : ''} ${shark.isExtinct ? 'extinct' : ''}`;
+
+                card.innerHTML = `
+                    <div class="shark-img" style="background-image: url('${shark.image}')"></div>
+                    <div class="shark-info">
+                        <div class="shark-name">${shark.name} ${shark.isBlahaj ? '🏳️‍⚧️' : ''}</div>
+                        <div class="shark-scientific">> ${shark.scientific}</div>
+                        <div class="shark-habitat">LOC: ${shark.habitat}</div>
+                    </div>
+                `;
+                sharkGrid.appendChild(card);
+            });
+        }
+
+        searchBar.addEventListener('input', (e) => {
+            const searchString = e.target.value.toLowerCase();
+            const filteredSharks = sharks.filter(shark => {
+                return (
+                    shark.name.toLowerCase().includes(searchString) ||
+                    shark.scientific.toLowerCase().includes(searchString) ||
+                    shark.habitat.toLowerCase().includes(searchString)
+                );
+            });
+            displaySharks(filteredSharks);
+        });
+
+        // Initialisation
+        displaySharks(sharks);
+    </script>
+</body>
+</html>
