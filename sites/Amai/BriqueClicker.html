@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 SUPER BRIQUE CLICKER 🌟</title>
+    <style>
+        /* CSS : Couleurs vives et animations dynamiques */
+        :root {
+            --primary: #ff0055;
+            --secondary: #00eeff;
+            --text: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden; /* Empêche le scroll avec les particules */
+            font-family: 'Comic Sans MS', 'Arial Black', sans-serif;
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 400% 400%;
+            animation: rainbowBackground 3s ease infinite;
+            color: var(--text);
+            text-align: center;
+            user-select: none;
+        }
+
+        @keyframes rainbowBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 10px;
+            animation: pulseText 0.5s alternate infinite;
+        }
+
+        #score-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ffff00;
+            margin-bottom: 20px;
+            transition: transform 0.1s;
+        }
+
+        /* La brique principale */
+        #main-brick {
+            font-size: 150px;
+            cursor: pointer;
+            transition: transform 0.05s;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            animation: float 2s ease-in-out infinite;
+        }
+
+        #main-brick:active {
+            transform: scale(0.8) rotate(15deg);
+        }
+
+        /* Animations */
+        @keyframes pulseText {
+            from { transform: scale(1); color: #00eeff; }
+            to { transform: scale(1.1); color: #ff00ee; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* Magasin */
+        #shop {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 20px;
+            border: 3px solid #fff;
+        }
+
+        .shop-item {
+            background: #ff0055;
+            border: 3px solid #ffff00;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px #ff0055;
+        }
+
+        .shop-item:hover {
+            background: #00eeff;
+            border-color: #ff00ee;
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 0 20px #00eeff;
+        }
+
+        .shop-item:active {
+            transform: scale(0.9);
+        }
+
+        /* Particules */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 2rem;
+            font-weight: bold;
+            animation: flyAway 1s forwards ease-out;
+            text-shadow: 0 0 5px #fff;
+        }
+
+        @keyframes flyAway {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(2) rotate(var(--rot)); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h1>💥 MEGA BRIQUE CLICKER 💥</h1>
+        <div id="score-display">0</div>
+        
+        <div id="main-brick">🧱</div>
+
+        <div id="shop">
+            <button class="shop-item" onclick="buyUpgrade('milk')">🥛 Brique de Lait<br>Coût: 50<br>(+1 clic)</button>
+            <button class="shop-item" onclick="buyUpgrade('juice')">🧃 Brique de Jus<br>Coût: 200<br>(+5 Auto/sec)</button>
+            <button class="shop-item" onclick="buyUpgrade('gold')">🧈 Brique de Beurre (Or)<br>Coût: 1000<br>(+15 clic)</button>
+            <button class="shop-item" onclick="buyUpgrade('crazy')">🧩 Brique Jouet<br>Coût: 5000<br>(FOLIE MAX)</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables du jeu
+        let score = 0;
+        let clickValue = 1;
+        let autoClickValue = 0;
+        let currentBrickEmoji = "🧱";
+
+        const scoreDisplay = document.getElementById('score-display');
+        const mainBrick = document.getElementById('main-brick');
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+
+        // Fonction de clic principal
+        mainBrick.addEventListener('mousedown', (e) => {
+            score += clickValue;
+            updateScore();
+            createParticles(e.clientX, e.clientY);
+            triggerScreenShake();
+        });
+
+        // Mise à jour de l'affichage
+        function updateScore() {
+            scoreDisplay.textContent = score;
+            scoreDisplay.style.transform = `scale(${1 + Math.random() * 0.5})`;
+            setTimeout(() => { scoreDisplay.style.transform = 'scale(1)'; }, 100);
+        }
+
+        // Création de particules dynamiques (effets visuels)
+        function createParticles(x, y) {
+            const numParticles = Math.floor(Math.random() * 3) + 3; // 3 à 5 particules
+            
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Mélange de +points et de l'emoji de la brique actuelle
+                particle.textContent = Math.random() > 0.5 ? `+${clickValue}` : currentBrickEmoji;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+
+                // Trajectoire aléatoire
+                const tx = (Math.random() - 0.5) * 300; // -150px à +150px
+                const ty = (Math.random() - 1) * 300;   // vers le haut
+                const rot = (Math.random() - 0.5) * 360;
+
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                particle.style.setProperty('--rot', `${rot}deg`);
+
+                document.body.appendChild(particle);
+
+                // Nettoyage de la particule après l'animation
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+
+        // Effet de secousse de l'écran léger
+        function triggerScreenShake() {
+            const x = (Math.random() - 0.5) * 10;
+            const y = (Math.random() - 0.5) * 10;
+            document.body.style.transform = `translate(${x}px, ${y}px)`;
+            setTimeout(() => {
+                document.body.style.transform = `translate(0px, 0px)`;
+            }, 50);
+        }
+
+        // Système d'améliorations (Shop)
+        function buyUpgrade(type) {
+            if (type === 'milk' && score >= 50) {
+                score -= 50;
+                clickValue += 1;
+                currentBrickEmoji = "🥛";
+                mainBrick.textContent = currentBrickEmoji;
+            } 
+            else if (type === 'juice' && score >= 200) {
+                score -= 200;
+                autoClickValue += 5;
+                currentBrickEmoji = "🧃";
+                mainBrick.textContent = currentBrickEmoji;
+            }
+            else if (type === 'gold' && score >= 1000) {
+                score -= 1000;
+                clickValue += 15;
+                currentBrickEmoji = "🧈"; // Le beurre c'est un peu la brique d'or de la cuisine
+                mainBrick.textContent = currentBrickEmoji;
+            }
+            else if (type === 'crazy' && score >= 5000) {
+                score -= 5000;
+                clickValue += 100;
+                autoClickValue += 50;
+                currentBrickEmoji = "🧩";
+                mainBrick.textContent = currentBrickEmoji;
+                // Accélère la folie du fond !
+                document.body.style.animationDuration = "0.5s";
+            }
+            else {
+                // Effet si pas assez de points
+                const btn = event.currentTarget;
+                btn.style.backgroundColor = "gray";
+                setTimeout(() => { btn.style.backgroundColor = ""; }, 200);
+                return;
+            }
+            updateScore();
+            createParticles(window.innerWidth / 2, window.innerHeight / 2); // Explosion au centre
+        }
+
+        // Boucle Auto-clicker
+        setInterval(() => {
+            if (autoClickValue > 0) {
+                score += autoClickValue;
+                updateScore();
+                
+                // Petit effet visuel automatique
+                const fakeEventX = window.innerWidth / 2 + (Math.random() - 0.5) * 100;
+                const fakeEventY = window.innerHeight / 2 + (Math.random() - 0.5) * 100;
+                createParticles(fakeEventX, fakeEventY);
+            }
+        }, 1000);
+
+    </script>
+</body>
+</html>

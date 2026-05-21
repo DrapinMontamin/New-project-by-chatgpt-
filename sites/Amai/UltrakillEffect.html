@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>ULTRAKILL // MAXIMUM OVERDRIVE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VCR+OSD+Mono&display=swap');
+
+        :root {
+            --uk-red: #ff0000;
+            --uk-blue: #00ffff;
+            --uk-gold: #ffcc00;
+            --bg-dark: #050505;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background: var(--bg-dark);
+            color: white;
+            font-family: 'VCR OSD Mono', monospace;
+            overflow: hidden; /* Empêche le scroll pour l'effet arcade */
+            height: 100vh;
+            user-select: none;
+        }
+
+        /* --- FILTRE CRT & SCANLINES --- */
+        .crt-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none; z-index: 999;
+        }
+
+        /* --- ANIMATIONS DE SECOUSSE --- */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            40% { transform: translate(3px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            80% { transform: translate(3px, -1px) rotate(1deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .shaking { animation: shake 0.15s infinite; }
+
+        /* --- CANVAS POUR LE SANG --- */
+        #blood-canvas {
+            position: fixed; top: 0; left: 0; pointer-events: none; z-index: 50;
+        }
+
+        /* --- UI ELEMENTS --- */
+        #ui-wrapper {
+            position: relative; height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 20px; z-index: 100;
+        }
+
+        .glitch-title {
+            font-size: 6rem; text-align: center; color: var(--uk-red);
+            text-shadow: 4px 4px var(--uk-blue);
+            animation: glitch-anim 0.2s infinite;
+        }
+
+        @keyframes glitch-anim {
+            0% { transform: skew(2deg); filter: hue-rotate(0deg); }
+            50% { transform: skew(-2deg); filter: hue-rotate(90deg); opacity: 0.8; }
+            100% { transform: skew(5deg); filter: hue-rotate(180deg); }
+        }
+
+        /* --- STYLE METER (DROITE) --- */
+        #style-meter {
+            position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
+            text-align: right;
+        }
+
+        #rank-letter {
+            font-size: 10rem; font-style: italic; font-weight: bold;
+            line-height: 0.8; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .combo-text { font-size: 1.5rem; color: var(--uk-blue); }
+
+        /* --- ARSENAL INTERACTIF (BAS) --- */
+        .weapon-dock {
+            display: flex; gap: 10px; justify-content: center;
+        }
+
+        .weapon-btn {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid var(--uk-red);
+            color: white; padding: 20px; width: 150px;
+            text-align: center; transition: 0.1s;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+        }
+
+        .weapon-btn:active {
+            background: var(--uk-red);
+            transform: scale(0.9);
+        }
+
+        /* --- FLOATING TEXT --- */
+        .damage-popup {
+            position: absolute; color: var(--uk-gold); font-weight: bold;
+            pointer-events: none; animation: floatUp 0.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(2); opacity: 0; }
+        }
+    </style>
+</head>
+<body id="main-body">
+
+    <div class="crt-overlay"></div>
+    <canvas id="blood-canvas"></canvas>
+
+    <div id="ui-wrapper">
+        <header>
+            <div class="glitch-title">ULTRAKILL</div>
+            <div id="terminal" style="color: var(--uk-blue); text-align: center;">V1_TERMINAL_ONLINE...</div>
+        </header>
+
+        <div id="style-meter">
+            <div class="combo-text" id="combo-name">DISMAL</div>
+            <div id="rank-letter">D</div>
+            <div id="score-val">000000</div>
+        </div>
+
+        <div class="weapon-dock">
+            <div class="weapon-btn" onmousedown="triggerAction(500, 'RICOSHOT', '#00ffff')">REVOLVER</div>
+            <div class="weapon-btn" onmousedown="triggerAction(800, 'PROJECTILE BOOST', '#ff0000')">SHOTGUN</div>
+            <div class="weapon-btn" onmousedown="triggerAction(300, 'NAILBOMB', '#00ff00')">NAILGUN</div>
+            <div class="weapon-btn" onmousedown="triggerAction(1500, 'RAILCOIN', '#ffcc00')">RAILCANON</div>
+        </div>
+    </div>
+
+<script>
+    const canvas = document.getElementById('blood-canvas');
+    const ctx = canvas.getContext('2d');
+    const body = document.getElementById('main-body');
+    let score = 0;
+    let particles = [];
+
+    // Ajuster taille canvas
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Rangs
+    const ranks = [
+        { l: 'D', n: 'DISMAL', c: '#888' },
+        { l: 'C', n: 'CATASTROPHIC', c: '#44ff44' },
+        { l: 'B', n: 'BRUTAL', c: '#4444ff' },
+        { l: 'A', n: 'ANARCHIC', c: '#ffaa00' },
+        { l: 'S', n: 'SUPREME', c: '#ff0000' },
+        { l: 'SS', n: 'SSADISTIC', c: '#ff0000' },
+        { l: 'SSS', n: 'SSSHITSTORM', c: '#ff0000' },
+        { l: 'U', n: 'ULTRAKILL', c: '#fff' }
+    ];
+
+    class Particle {
+        constructor(x, y, color) {
+            this.x = x; this.y = y;
+            this.size = Math.random() * 8 + 2;
+            this.speedX = (Math.random() - 0.5) * 20;
+            this.speedY = (Math.random() - 0.5) * 20;
+            this.color = color;
+            this.life = 1.0;
+        }
+        update() {
+            this.x += this.speedX; this.y += this.speedY;
+            this.life -= 0.02;
+        }
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, this.size, this.size);
+        }
+    }
+
+    function triggerAction(pts, name, color) {
+        score += pts;
+        
+        // Effet de secousse
+        body.classList.add('shaking');
+        setTimeout(() => body.classList.remove('shaking'), 200);
+
+        // Particules
+        for(let i=0; i<20; i++) {
+            particles.push(new Particle(window.innerWidth/2, window.innerHeight/2, color));
+        }
+
+        // Popup texte
+        const pop = document.createElement('div');
+        pop.className = 'damage-popup';
+        pop.style.left = (Math.random() * 60 + 20) + '%';
+        pop.style.top = (Math.random() * 60 + 20) + '%';
+        pop.innerText = name + " +" + pts;
+        document.body.appendChild(pop);
+        setTimeout(() => pop.remove(), 500);
+
+        updateStyle();
+    }
+
+    function updateStyle() {
+        const rankIdx = Math.min(Math.floor(score / 3000), ranks.length - 1);
+        const r = ranks[rankIdx];
+        
+        const letterEl = document.getElementById('rank-letter');
+        letterEl.innerText = r.l;
+        letterEl.style.color = r.c;
+        letterEl.style.transform = 'scale(1.5) rotate(' + (Math.random()*20 - 10) + 'deg)';
+        setTimeout(() => letterEl.style.transform = 'scale(1)', 100);
+
+        document.getElementById('combo-name').innerText = r.n;
+        document.getElementById('score-val').innerText = score.toString().padStart(6, '0');
+        
+        // Flash de couleur
+        body.style.backgroundColor = '#200';
+        setTimeout(() => body.style.backgroundColor = '#050505', 50);
+    }
+
+    function animate() {
+        ctx.fillStyle = 'rgba(5, 5, 5, 0.3)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        particles = particles.filter(p => p.life > 0);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        
+        // Décroissance naturelle du score
+        if(score > 0) score -= 2;
+        
+        requestAnimationFrame(animate);
+    }
+
+    // Interaction souris = Sang
+    window.addEventListener('mousedown', (e) => {
+        for(let i=0; i<10; i++) {
+            particles.push(new Particle(e.clientX, e.clientY, '#ff0000'));
+        }
+    });
+
+    animate();
+</script>
+
+</body>
+</html>

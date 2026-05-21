@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TAMASHIKA - OVERLOAD</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+    :root {
+      --neon-pink: #ff00ff;
+      --neon-cyan: #00ffff;
+      --neon-yellow: #ffff00;
+      --neon-red: #ff003c;
+      --bg-dark: #050005;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-dark);
+      color: #fff;
+      font-family: 'VT323', monospace;
+      overflow: hidden;
+      cursor: crosshair;
+      user-select: none;
+    }
+
+    /* Screen shake to simulate constant high speed/impact */
+    body {
+      animation: screenShake 0.2s infinite;
+    }
+
+    @keyframes screenShake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    /* Aggressive CRT and Scanline overlay */
+    .crt-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), 
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.09), rgba(0, 255, 0, 0.04), rgba(0, 0, 255, 0.09));
+      background-size: 100% 3px, 4px 100%;
+      pointer-events: none;
+      z-index: 100;
+      animation: flicker 0.15s infinite;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.9; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    /* Marquee containers (Scrolling text) */
+    .marquee-container {
+      position: absolute;
+      width: 100vw;
+      white-space: nowrap;
+      overflow: hidden;
+      z-index: 10;
+      font-size: 3rem;
+      text-transform: uppercase;
+      background: var(--neon-red);
+      color: var(--neon-yellow);
+      mix-blend-mode: exclusion;
+    }
+
+    .marquee-container.top { top: 10%; transform: rotate(-2deg); }
+    .marquee-container.bottom { bottom: 10%; transform: rotate(2deg); background: var(--neon-cyan); color: var(--neon-pink); }
+
+    .marquee-content {
+      display: inline-block;
+      animation: scrollLeft 2s linear infinite;
+    }
+
+    .marquee-content.reverse {
+      animation: scrollRight 1.5s linear infinite;
+    }
+
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @keyframes scrollRight {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Massive Glitch Center Title */
+    .glitch-title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 8rem;
+      font-weight: bold;
+      color: #fff;
+      z-index: 20;
+      text-transform: uppercase;
+      letter-spacing: 10px;
+    }
+
+    .glitch-title::before, .glitch-title::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-dark);
+    }
+
+    .glitch-title::before {
+      left: 4px;
+      text-shadow: -4px 0 var(--neon-red);
+      clip: rect(44px, 450px, 56px, 0);
+      animation: glitch-anim 0.2s infinite linear alternate-reverse;
+    }
+
+    .glitch-title::after {
+      left: -4px;
+      text-shadow: -4px 0 var(--neon-cyan);
+      clip: rect(44px, 450px, 56px, 0);
+      animation: glitch-anim2 0.3s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-anim {
+      0% { clip: rect(10px, 9999px, 85px, 0); transform: skew(0.8deg); }
+      20% { clip: rect(32px, 9999px, 12px, 0); transform: skew(0.1deg); }
+      40% { clip: rect(89px, 9999px, 53px, 0); transform: skew(0.5deg); }
+      60% { clip: rect(12px, 9999px, 98px, 0); transform: skew(0.9deg); }
+      80% { clip: rect(65px, 9999px, 23px, 0); transform: skew(0.3deg); }
+      100% { clip: rect(43px, 9999px, 78px, 0); transform: skew(0.6deg); }
+    }
+
+    @keyframes glitch-anim2 {
+      0% { clip: rect(65px, 9999px, 100px, 0); transform: skew(-0.8deg); }
+      20% { clip: rect(2px, 9999px, 42px, 0); transform: skew(-0.1deg); }
+      40% { clip: rect(45px, 9999px, 83px, 0); transform: skew(-0.5deg); }
+      60% { clip: rect(92px, 9999px, 18px, 0); transform: skew(-0.9deg); }
+      80% { clip: rect(15px, 9999px, 73px, 0); transform: skew(-0.3deg); }
+      100% { clip: rect(83px, 9999px, 38px, 0); transform: skew(-0.6deg); }
+    }
+
+    /* Pop-up words generated by JS */
+    .chaos-word {
+      position: absolute;
+      font-size: 4rem;
+      font-weight: bold;
+      pointer-events: none;
+      z-index: 15;
+      text-transform: uppercase;
+      animation: popOut 0.4s forwards;
+    }
+
+    @keyframes popOut {
+      0% { transform: scale(0.5); opacity: 1; }
+      50% { transform: scale(1.5) rotate(10deg); opacity: 1; }
+      100% { transform: scale(2) rotate(-10deg); opacity: 0; filter: blur(4px); }
+    }
+
+    /* Speed lines simulation in background */
+    .speed-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: repeating-linear-gradient(
+        transparent,
+        transparent 10px,
+        rgba(255, 0, 255, 0.1) 10px,
+        rgba(0, 255, 255, 0.1) 20px
+      );
+      animation: speedScroll 0.5s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes speedScroll {
+      from { transform: translateY(0); }
+      to { transform: translateY(-20px); }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="crt-overlay"></div>
+  <div class="speed-lines"></div>
+
+  <div class="marquee-container top">
+    <div class="marquee-content">
+      THE PRESENT MOMENT IS THE ONLY THING THAT IS REAL // FOCUS // THE PRESENT MOMENT IS THE ONLY THING THAT IS REAL // FOCUS // 
+    </div>
+    <div class="marquee-content">
+      THE PRESENT MOMENT IS THE ONLY THING THAT IS REAL // FOCUS // THE PRESENT MOMENT IS THE ONLY THING THAT IS REAL // FOCUS // 
+    </div>
+  </div>
+
+  <div class="marquee-container bottom">
+    <div class="marquee-content reverse">
+      RABBIT HOLE // CARTESIAN PRISON // ATTRACTORS DETECTED // RABBIT HOLE // CARTESIAN PRISON // ATTRACTORS DETECTED // 
+    </div>
+    <div class="marquee-content reverse">
+      RABBIT HOLE // CARTESIAN PRISON // ATTRACTORS DETECTED // RABBIT HOLE // CARTESIAN PRISON // ATTRACTORS DETECTED // 
+    </div>
+  </div>
+
+  <div class="glitch-title" data-text="CONTINUITY">CONTINUITY</div>
+
+  <script>
+    // --- 1. CHAOS WORD GENERATOR ---
+    // Spawns aggressive keywords randomly across the screen
+    const dictionary = ["FOCUS!", "SPEED", "ILLUSION", "WAKE UP", "RABBIT", "BLADE", "KILL", "COMBO", "MIND", "ERROR"];
+    const colors = ['var(--neon-pink)', 'var(--neon-cyan)', 'var(--neon-yellow)', 'var(--neon-red)'];
+
+    function spawnWord() {
+      const wordEl = document.createElement('div');
+      wordEl.className = 'chaos-word';
+      wordEl.innerText = dictionary[Math.floor(Math.random() * dictionary.length)];
+      
+      // Random position
+      wordEl.style.left = Math.random() * 80 + 10 + 'vw';
+      wordEl.style.top = Math.random() * 80 + 10 + 'vh';
+      
+      // Random styling
+      wordEl.style.color = colors[Math.floor(Math.random() * colors.length)];
+      wordEl.style.textShadow = `4px 4px ${colors[Math.floor(Math.random() * colors.length)]}`;
+      
+      document.body.appendChild(wordEl);
+
+      // Remove element after animation ends to prevent memory leak
+      setTimeout(() => {
+        wordEl.remove();
+      }, 400); // matches the 0.4s animation
+    }
+
+    // Spawn a word extremely fast (every 150ms)
+    setInterval(spawnWord, 150);
+
+    // --- 2. CENTER TEXT SCRAMBLER ---
+    // The massive glitch title changes words rapidly
+    const titleDict = ["TAMASHIKA", "CONTINUITY", "LABYRINTH", "ATTENTION"];
+    const titleEl = document.querySelector('.glitch-title');
+
+    setInterval(() => {
+      const newTitle = titleDict[Math.floor(Math.random() * titleDict.length)];
+      titleEl.innerText = newTitle;
+      titleEl.setAttribute('data-text', newTitle); // Update pseudo-elements for glitch
+    }, 800); // Changes every 0.8 seconds
+
+    // --- 3. INTERACTIVE OVERLOAD ---
+    // Clicking anywhere triggers a massive color inversion and speeds up the elements
+    window.addEventListener('mousedown', () => {
+      document.body.style.filter = `invert(100%) hue-rotate(${Math.random() * 360}deg) saturate(300%)`;
+      
+      // Spawn extra words on click
+      for(let i=0; i<5; i++) {
+        setTimeout(spawnWord, i * 50);
+      }
+
+      setTimeout(() => {
+        document.body.style.filter = 'none';
+      }, 100);
+    });
+
+  </script>
+</body>
+</html>

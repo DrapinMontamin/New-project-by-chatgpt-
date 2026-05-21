@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ULTRAKILL // TERMINAL ACCESS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VCR+OSD+Mono&display=swap');
+
+        :root {
+            --uk-red: #ff0000;
+            --uk-blue: #00ffff;
+            --uk-gold: #ffcc00;
+            --uk-bg: #050505;
+            --uk-panel: rgba(20, 20, 20, 0.9);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: crosshair;
+        }
+
+        body {
+            background-color: var(--uk-bg);
+            color: white;
+            font-family: 'VCR OSD Mono', monospace;
+            overflow-x: hidden;
+            background-image: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+        }
+
+        /* --- EFFETS DE GLITCH --- */
+        .glitch {
+            position: relative;
+            font-size: 4rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-shadow: 0.05em 0 0 var(--uk-red), -0.025em -0.05em 0 var(--uk-blue);
+            animation: glitch 500ms infinite;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 0.05em 0 0 var(--uk-red), -0.025em -0.05em 0 var(--uk-blue); }
+            14% { text-shadow: 0.05em 0 0 var(--uk-red), -0.025em -0.05em 0 var(--uk-blue); }
+            15% { text-shadow: -0.05em -0.025em 0 var(--uk-red), 0.025em 0.025em 0 var(--uk-blue); }
+            49% { text-shadow: -0.05em -0.025em 0 var(--uk-red), 0.025em 0.025em 0 var(--uk-blue); }
+            50% { text-shadow: 0.025em 0.05em 0 var(--uk-red), 0.05em 0 0 var(--uk-blue); }
+            99% { text-shadow: 0.025em 0.05em 0 var(--uk-red), 0.05em 0 0 var(--uk-blue); }
+            100% { text-shadow: -0.025em 0 0 var(--uk-red), -0.025em -0.025em 0 var(--uk-blue); }
+        }
+
+        /* --- LAYOUT --- */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 5px solid var(--uk-red);
+            background: radial-gradient(circle, #200000 0%, #050505 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .section-title {
+            color: var(--uk-red);
+            border-left: 10px solid var(--uk-red);
+            padding-left: 20px;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--uk-panel);
+            border: 2px solid #333;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--uk-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        /* --- STYLE METER (DYNAMIQUE) --- */
+        #style-hud {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .rank-text {
+            font-size: 5rem;
+            font-style: italic;
+            margin-bottom: -10px;
+            display: block;
+        }
+
+        .S-rank { color: var(--uk-gold); text-shadow: 0 0 20px var(--uk-gold); }
+        .D-rank { color: #555; }
+
+        /* --- BOUTONS --- */
+        .uk-btn {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 15px 30px;
+            font-family: 'VCR OSD Mono';
+            font-size: 1.2rem;
+            margin-top: 20px;
+            transition: 0.2s;
+        }
+
+        .uk-btn:hover {
+            background: white;
+            color: black;
+        }
+
+        .blood-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 50%, rgba(138, 3, 3, 0.4) 100%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="blood-overlay" id="blood"></div>
+
+<div id="style-hud">
+    <span class="rank-text D-rank" id="rank-display">D</span>
+    <div style="font-size: 1.5rem;">DISMAL</div>
+    <div id="points-display">0</div>
+</div>
+
+<header>
+    <div class="glitch">ULTRAKILL</div>
+    <p style="letter-spacing: 5px; color: var(--uk-blue);">MANKIND IS DEAD. BLOOD IS FUEL. HELL IS FULL.</p>
+    <button class="uk-btn" onclick="addStyle(500, 'PROJECTILE BOOST')">ENTER HELL</button>
+</header>
+
+<div class="container">
+    <section>
+        <h2 class="section-title">ARSENAL</h2>
+        <div class="grid">
+            <div class="card" onclick="addStyle(100, 'RICOSHOT')">
+                <h3 style="color: var(--uk-blue);">REVOLVER</h3>
+                <p>Modèle de base. Utilisez les pièces pour des Ricochets dévastateurs.</p>
+            </div>
+            <div class="card" onclick="addStyle(200, 'PARRY')">
+                <h3 style="color: var(--uk-gold);">SHOTGUN</h3>
+                <p>Puissance brute. "Projectile Boost" en frappant vos propres balles.</p>
+            </div>
+            <div class="card" onclick="addStyle(300, 'CONDUCTOR')">
+                <h3 style="color: #00ff00;">NAILGUN</h3>
+                <p>Cadence de tir élevée. Parfait pour les ennemis massifs.</p>
+            </div>
+        </div>
+    </section>
+
+    <section style="margin-top: 100px;">
+        <h2 class="section-title">TERMINAL DATA</h2>
+        <div class="card" style="width: 100%;">
+            <p id="terminal-text"></p>
+        </div>
+    </section>
+</div>
+
+<script>
+    // --- SYSTÈME DE STYLE ---
+    let score = 0;
+    const ranks = [
+        { name: 'D', label: 'DISMAL', color: '#555', min: 0 },
+        { name: 'C', label: 'CATASTROPHIC', color: '#4a90e2', min: 1000 },
+        { name: 'B', label: 'BRUTAL', color: '#f8e71c', min: 2500 },
+        { name: 'A', label: 'ANARCHIC', color: '#f5a623', min: 5000 },
+        { name: 'S', label: 'SUPREME', color: '#ff0000', min: 8000 },
+        { name: 'SS', label: 'SSADISTIC', color: '#ff0000', min: 12000 },
+        { name: 'SSS', label: 'SSSHITSTORM', color: '#ff0000', min: 18000 },
+        { name: 'ULTRAKILL', label: 'ULTRAKILL', color: '#ffcc00', min: 25000 }
+    ];
+
+    function addStyle(pts, action) {
+        score += pts;
+        updateUI();
+        flashBlood();
+        
+        // Log terminal
+        const term = document.getElementById('terminal-text');
+        term.innerHTML += `> ${action} [+${pts}]<br>`;
+        if(term.innerHTML.length > 500) term.innerHTML = term.innerHTML.slice(-500);
+    }
+
+    function updateUI() {
+        const display = document.getElementById('rank-display');
+        const label = display.nextElementSibling;
+        const ptsDisplay = document.getElementById('points-display');
+        
+        let currentRank = ranks[0];
+        for (let r of ranks) {
+            if (score >= r.min) currentRank = r;
+        }
+
+        display.innerText = currentRank.name;
+        display.style.color = currentRank.color;
+        label.innerText = currentRank.label;
+        label.style.color = currentRank.color;
+        ptsDisplay.innerText = score;
+    }
+
+    function flashBlood() {
+        const blood = document.getElementById('blood');
+        blood.style.opacity = '1';
+        setTimeout(() => blood.style.opacity = '0', 150);
+    }
+
+    // --- EFFET DE TYPEWRITER ---
+    const text = "V1 identifié. Protocoles de combat activés. Objectif : Récupération de sang. La survie est optionnelle. La destruction est nécessaire.";
+    let i = 0;
+    function typeWriter() {
+        if (i < text.length) {
+            document.getElementById("terminal-text").innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 30);
+        }
+    }
+
+    window.onload = typeWriter;
+
+    // Décroissance du score (comme dans le jeu)
+    setInterval(() => {
+        if(score > 0) {
+            score -= 10;
+            updateUI();
+        }
+    }, 100);
+</script>
+
+</body>
+</html>

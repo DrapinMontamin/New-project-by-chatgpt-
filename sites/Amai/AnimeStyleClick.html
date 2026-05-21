@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ SUPER ANIME BURST ✨</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=M+PLUS+Rounded+1c:wght@900&display=swap');
+
+        :root {
+            --pink: #ff007f;
+            --cyan: #00f0ff;
+            --yellow: #ffde00;
+            --purple: #bf00ff;
+            --green: #39ff14;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background-color: var(--purple);
+            user-select: none;
+            cursor: crosshair;
+        }
+
+        /* --- FOND TOURNANT STYLE ANIME (SUNBURST) --- */
+        .sunburst {
+            position: fixed;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: repeating-conic-gradient(
+                var(--pink) 0 15deg, 
+                var(--yellow) 15deg 30deg
+            );
+            animation: spin 10s linear infinite;
+            z-index: 1;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- EFFET DE SECOUSSE D'ÉCRAN --- */
+        .shake {
+            animation: screenShake 0.1s infinite;
+        }
+
+        @keyframes screenShake {
+            0% { transform: translate(5px, 5px) rotate(0deg); }
+            25% { transform: translate(-5px, -5px) rotate(1deg); }
+            50% { transform: translate(-5px, 5px) rotate(-1deg); }
+            75% { transform: translate(5px, -5px) rotate(1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* --- UI ET BOUTON CENTRAL --- */
+        .ui-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 6rem;
+            color: white;
+            text-transform: uppercase;
+            text-shadow: 
+                -4px -4px 0 #000,  
+                 4px -4px 0 #000,
+                -4px  4px 0 #000,
+                 4px  4px 0 #000,
+                 10px 10px 0 var(--cyan);
+            animation: pulse 0.5s infinite alternate;
+            margin-bottom: 20px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1) rotate(-2deg); }
+            100% { transform: scale(1.05) rotate(2deg); }
+        }
+
+        .smash-btn {
+            background: var(--cyan);
+            color: white;
+            font-family: 'Black Ops One', cursive;
+            font-size: 3rem;
+            padding: 20px 60px;
+            border: 8px solid black;
+            border-radius: 50px;
+            box-shadow: 10px 10px 0 var(--pink);
+            cursor: pointer;
+            transition: 0.1s;
+            text-shadow: 3px 3px 0 black;
+        }
+
+        .smash-btn:hover {
+            background: var(--green);
+            transform: scale(1.2);
+            box-shadow: 15px 15px 0 var(--yellow);
+        }
+
+        .smash-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0px 0px 0 black;
+        }
+
+        /* --- TEXTES FLOTTANTS (MANGA POPUPS) --- */
+        .manga-text {
+            position: absolute;
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--yellow);
+            -webkit-text-stroke: 3px black;
+            text-shadow: 5px 5px 0 var(--pink);
+            pointer-events: none;
+            z-index: 50;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: translate(-50%, -100px) scale(1.5) rotate(15deg); opacity: 1; }
+            100% { transform: translate(-50%, -200px) scale(2) rotate(-15deg); opacity: 0; }
+        }
+
+        /* --- CANVAS POUR PARTICULES --- */
+        #fx-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body id="main-body">
+
+    <div class="sunburst"></div>
+    <canvas id="fx-canvas"></canvas>
+
+    <div class="ui-container">
+        <div class="title">SUPER BURST!</div>
+        <button class="smash-btn" id="mega-btn" onclick="megaExplosion(event)">CLIQUE MOI!</button>
+    </div>
+
+<script>
+    const canvas = document.getElementById('fx-canvas');
+    const ctx = canvas.getContext('2d');
+    const body = document.getElementById('main-body');
+
+    // Mots style Anime qui apparaissent
+    const words = ["YATTA!", "SUGOI!", "BOOM!", "KAWAII!", "SMASH!", "BAM!", "K.O.!", "キラキラ!"];
+    const colors = ["#ff007f", "#00f0ff", "#ffde00", "#39ff14", "#ffffff"];
+
+    let particles = [];
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Système de particules (Étoiles et Cercles)
+    class Particle {
+        constructor(x, y, isStar) {
+            this.x = x;
+            this.y = y;
+            this.size = Math.random() * 20 + 10;
+            this.speedX = (Math.random() - 0.5) * 30;
+            this.speedY = (Math.random() - 0.5) * 30;
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.life = 1.0;
+            this.isStar = isStar;
+            this.rotation = Math.random() * 360;
+            this.rotSpeed = (Math.random() - 0.5) * 20;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.speedY += 0.5; // Gravité
+            this.life -= 0.02; // Disparition
+            this.rotation += this.rotSpeed;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation * Math.PI / 180);
+            ctx.globalAlpha = Math.max(0, this.life);
+            
+            if (this.isStar) {
+                // Dessiner une étoile
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo(Math.cos((18 + i * 72) / 180 * Math.PI) * this.size,
+                               -Math.sin((18 + i * 72) / 180 * Math.PI) * this.size);
+                    ctx.lineTo(Math.cos((54 + i * 72) / 180 * Math.PI) * (this.size/2),
+                               -Math.sin((54 + i * 72) / 180 * Math.PI) * (this.size/2));
+                }
+                ctx.closePath();
+                ctx.fill();
+            } else {
+                // Dessiner un cercle
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+    }
+
+    // Animation Loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Nettoie le canvas pour éviter la trainée
+        
+        // Mettre à jour et dessiner les particules
+        particles = particles.filter(p => p.life > 0);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Créer du texte flottant
+    function spawnText(x, y) {
+        const textEl = document.createElement('div');
+        textEl.className = 'manga-text';
+        textEl.innerText = words[Math.floor(Math.random() * words.length)];
+        textEl.style.left = x + 'px';
+        textEl.style.top = y + 'px';
+        
+        // Couleur de contour aléatoire
+        textEl.style.textShadow = `5px 5px 0 ${colors[Math.floor(Math.random() * colors.length)]}`;
+        
+        document.body.appendChild(textEl);
+
+        // Nettoyer le DOM après l'animation
+        setTimeout(() => {
+            textEl.remove();
+        }, 800);
+    }
+
+    // Action au clic sur le fond
+    window.addEventListener('mousedown', (e) => {
+        if(e.target.id === 'mega-btn') return; // Ne pas double-trigger si on clique le bouton
+        createExplosion(e.clientX, e.clientY, 15);
+        spawnText(e.clientX, e.clientY);
+    });
+
+    // Fonction d'explosion de particules
+    function createExplosion(x, y, amount) {
+        for(let i = 0; i < amount; i++) {
+            particles.push(new Particle(x, y, Math.random() > 0.5));
+        }
+    }
+
+    // Action du bouton Géant
+    function megaExplosion(e) {
+        // Grosse secousse
+        body.classList.add('shake');
+        setTimeout(() => body.classList.remove('shake'), 300);
+
+        // Énorme explosion au centre
+        createExplosion(window.innerWidth / 2, window.innerHeight / 2, 100);
+        
+        // Plein de textes aléatoires
+        for(let i = 0; i < 5; i++) {
+            setTimeout(() => {
+                spawnText(
+                    Math.random() * window.innerWidth, 
+                    Math.random() * window.innerHeight
+                );
+            }, i * 100);
+        }
+        
+        // Changement de la couleur du rayon
+        document.documentElement.style.setProperty('--pink', colors[Math.floor(Math.random() * colors.length)]);
+    }
+
+</script>
+</body>
+</html>

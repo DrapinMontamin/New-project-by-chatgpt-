@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TAMASHIKA - FOCUS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+    :root {
+      --neon-pink: #ff00ff;
+      --neon-cyan: #00ffff;
+      --neon-yellow: #ffff00;
+      --neon-red: #ff003c;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #050005;
+      color: #fff;
+      font-family: 'VT323', monospace;
+      overflow: hidden;
+      cursor: crosshair;
+      user-select: none;
+    }
+
+    /* Pulsating chaotic background */
+    body {
+      animation: bgPulse 3s infinite alternate;
+    }
+
+    @keyframes bgPulse {
+      0% { background-color: #050005; }
+      50% { background-color: #1a001a; }
+      100% { background-color: #001a1a; }
+    }
+
+    /* CRT Scanline Effect */
+    .crt-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      background-size: 100% 4px, 3px 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Container for the text */
+    .container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 6rem;
+      margin-bottom: 30px;
+      position: relative;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      animation: glitch 1.5s infinite;
+    }
+
+    p {
+      font-size: 2rem;
+      margin: 8px 0;
+      line-height: 1.2;
+      text-shadow: 2px 2px var(--neon-pink);
+      color: #fff;
+    }
+
+    .highlight {
+      color: var(--neon-cyan);
+      font-weight: bold;
+      text-shadow: 2px 2px var(--neon-red);
+    }
+
+    .highlight.yellow {
+      color: var(--neon-yellow);
+      text-shadow: 2px 2px var(--neon-pink);
+    }
+
+    .highlight.red {
+      color: var(--neon-red);
+      font-size: 2.5rem;
+      text-shadow: 3px 3px var(--neon-yellow);
+      animation: jitter 0.1s infinite;
+      display: inline-block;
+    }
+
+    /* Jitter effect for the word FOCUS */
+    @keyframes jitter {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(3px, -3px); }
+      50% { transform: translate(-3px, 3px); }
+      75% { transform: translate(3px, 3px); }
+      100% { transform: translate(-3px, -3px); }
+    }
+
+    /* Glitch effect for TAMASHIKA title */
+    @keyframes glitch {
+      0% { text-shadow: 3px 0 var(--neon-cyan), -3px 0 var(--neon-red); }
+      20% { text-shadow: -3px 0 var(--neon-cyan), 3px 0 var(--neon-red); }
+      40% { text-shadow: 3px 3px var(--neon-cyan), -3px -3px var(--neon-red); }
+      60% { text-shadow: -3px -3px var(--neon-cyan), 3px 3px var(--neon-red); }
+      80% { text-shadow: 3px -3px var(--neon-cyan), -3px 3px var(--neon-red); }
+      100% { text-shadow: 3px 0 var(--neon-cyan), -3px 0 var(--neon-red); }
+    }
+
+    /* Screen flash for the gun/blade mechanic */
+    #flash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 50;
+      transition: opacity 0.05s ease-out;
+    }
+
+    /* The chaotic attractors from the game description */
+    .attractor {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: var(--neon-pink);
+      pointer-events: none;
+      z-index: 5;
+      box-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="crt-overlay"></div>
+  <div id="flash"></div>
+
+  <div class="container">
+    <h1>TAMASHIKA</h1>
+    <p>the game is about keeping your mind at one place.</p>
+    <p>patterns in sensate experience reinforce an illusion of <span class="highlight">CONTINUITY</span>.</p>
+    <p>the DREAM is a construction of the MIND that perpetuates the <span class="highlight yellow">ILLUSION</span>.</p>
+    <p>the cartesian prison is a hall of mirrors, a recursive <span class="highlight">LABYRINTH</span>.</p>
+    <p>each a reflection of me - only <span class="highlight yellow">PATTERNS</span> and <span class="highlight yellow">PROCESSES</span>.</p>
+    <p>the present moment is the only thing that is real - <span class="highlight red">FOCUS</span>.</p>
+    <p>chaotic attractors are seizing your <span class="highlight">ATTENTION</span>.</p>
+  </div>
+
+  <script>
+    // --- 1. CHAOTIC ATTRACTORS ---
+    // Simulating the "chaotic attractors" mentioned in the game's lore
+    const numAttractors = 25;
+    const attractors = [];
+    const colors = ['#ff00ff', '#00ffff', '#ffff00', '#ff003c'];
+
+    for(let i = 0; i < numAttractors; i++) {
+      const el = document.createElement('div');
+      el.className = 'attractor';
+      document.body.appendChild(el);
+      
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      el.style.backgroundColor = color;
+      el.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+
+      attractors.push({
+        el: el,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 15,
+        vy: (Math.random() - 0.5) * 15
+      });
+    }
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    // Track the crosshair (mouse) to "seize your attention"
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function update() {
+      attractors.forEach(a => {
+        // The attractors are pulled toward your focus (the mouse) but move chaotically
+        a.vx += (mouseX - a.x) * 0.002 + (Math.random() - 0.5) * 3;
+        a.vy += (mouseY - a.y) * 0.002 + (Math.random() - 0.5) * 3;
+        
+        // Friction / Speed limit
+        a.vx *= 0.92;
+        a.vy *= 0.92;
+        
+        a.x += a.vx;
+        a.y += a.vy;
+        
+        // Bounce off the edges of the "cartesian prison"
+        if(a.x < 0 || a.x > window.innerWidth) a.vx *= -1;
+        if(a.y < 0 || a.y > window.innerHeight) a.vy *= -1;
+        
+        a.el.style.transform = `translate(${a.x}px, ${a.y}px)`;
+      });
+      requestAnimationFrame(update);
+    }
+    update(); // Start loop
+
+    // --- 2. FAST-FPS MECHANICS (Pistol & Tantō Blade) ---
+    // Clicking simulates firing the semi-automatic pistol or swinging the blade,
+    // creating a sensory-overload flash and temporary color inversion.
+    const flash = document.getElementById('flash');
+    let toggleWeapon = false; // Alternates between pistol (white flash) and blade (red flash)
+
+    window.addEventListener('mousedown', () => {
+      // Trigger the flash
+      flash.style.opacity = '1';
+      flash.style.backgroundColor = toggleWeapon ? '#fff' : '#ff003c';
+      
+      // Invert and rotate colors of the whole screen to disorient
+      document.body.style.filter = `invert(100%) hue-rotate(${Math.random() * 360}deg)`;
+      
+      // Quickly reset
+      setTimeout(() => {
+        flash.style.opacity = '0';
+        document.body.style.filter = 'none';
+      }, 50); // Extremely fast recovery, typical of fast-paced games
+
+      toggleWeapon = !toggleWeapon;
+    });
+  </script>
+</body>
+</html>

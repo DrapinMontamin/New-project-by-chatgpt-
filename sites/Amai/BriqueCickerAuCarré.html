@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧱 TECHNO-BRICK CLICKER 3000 🚀</title>
+    <style>
+        :root {
+            --neon-pink: #ff6bcb;
+            --neon-cyan: #00f0ff;
+            --neon-lime: #baff1a;
+            --pastel-purple: #d0bfff;
+            --pastel-yellow: #fff9a6;
+        }
+
+        /* Effet de distorsion globale et de rotation chromatique permanente */
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle, #0d001a, #020005);
+            color: #fff;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            user-select: none;
+            animation: cosmicNausea 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes cosmicNausea {
+            0% { filter: hue-rotate(0deg) saturate(1) contrast(1); }
+            50% { filter: hue-rotate(180deg) saturate(2) contrast(1.3); }
+            100% { filter: hue-rotate(360deg) saturate(1) contrast(1); }
+        }
+
+        /* Secousse d'écran ultra-dynamique déclenchée au clic */
+        .shake {
+            animation: heavyShake 0.15s infinite;
+        }
+
+        @keyframes heavyShake {
+            0% { transform: translate(4px, 6px) rotate(1.5deg); }
+            20% { transform: translate(-6px, -4px) rotate(-2deg); }
+            40% { transform: translate(5px, -2px) rotate(2.5deg); }
+            60% { transform: translate(-4px, 4px) rotate(0deg); }
+            80% { transform: translate(3px, 3px) rotate(-1.5deg); }
+            100% { transform: translate(-2px, -5px) rotate(1.5deg); }
+        }
+
+        /* Grille spatiale infinie en perspective 3D */
+        .grid-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.15) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.15) 2px, transparent 2px);
+            background-size: 50px 50px;
+            transform: perspective(400px) rotateX(65deg) translateY(-40%);
+            animation: gridScroll 1.5s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes gridScroll {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 50px; }
+        }
+
+        /* Layout Principal */
+        .game-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        /* Menu d'améliorations Cyber */
+        .shop {
+            background: rgba(20, 0, 40, 0.85);
+            border: 4px dashed var(--neon-cyan);
+            padding: 20px;
+            width: 320px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px var(--neon-pink), inset 0 0 15px rgba(255,255,255,0.2);
+            transform: rotate(-1deg);
+        }
+
+        .shop h2 {
+            text-shadow: 0 0 10px var(--neon-pink);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .shop-item {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 6px solid var(--neon-lime);
+            cursor: pointer;
+            transition: transform 0.1s, background 0.1s;
+        }
+
+        .shop-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05) x;
+        }
+
+        /* Zone centrale du Clicker */
+        .click-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-board {
+            font-size: 3.5rem;
+            text-shadow: 0 0 15px var(--neon-cyan), 0 0 30px var(--neon-pink);
+            margin-bottom: 40px;
+            text-align: center;
+            animation: textPulse 0.5s infinite alternate;
+        }
+
+        @keyframes textPulse {
+            0% { transform: scale(1) rotate(-1deg); }
+            100% { transform: scale(1.04) rotate(1deg); text-shadow: 0 0 25px var(--neon-lime); }
+        }
+
+        /* Structure géométrique 3D de la Brique */
+        .brick-wrapper {
+            perspective: 1000px;
+            margin-bottom: 30px;
+        }
+
+        .brick {
+            width: 280px;
+            height: 150px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: autoSpin 8s linear infinite;
+            transition: transform 0.05s;
+        }
+
+        .brick:active {
+            transform: scale(0.8) rotateY(20deg);
+        }
+
+        @keyframes autoSpin {
+            0% { transform: rotateY(0deg) rotateX(15deg); }
+            50% { transform: rotateY(180deg) rotateX(-15deg); }
+            100% { transform: rotateY(360deg) rotateX(15deg); }
+        }
+
+        /* Apparences interchangeables des briques */
+        .brick-face {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            border-radius: 10px;
+            border: 4px solid #fff;
+            box-shadow: 0 20px 0 rgba(0,0,0,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .skin-construction {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            box-shadow: 0 15px 0 #b33939, 0 0 40px rgba(255, 71, 87, 0.6);
+        }
+
+        .skin-lait {
+            background: linear-gradient(135deg, #ffffff, #eccc68);
+            color: #2f3542;
+            box-shadow: 0 15px 0 #ced6e0, 0 0 40px rgba(255, 255, 255, 0.8);
+        }
+
+        .skin-cyber {
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+            box-shadow: 0 15px 0 #70a1ff, 0 0 50px var(--neon-cyan);
+            animation: glitchEffect 0.3s infinite alternate;
+        }
+
+        /* Sélecteurs de skins en forme de bannières */
+        .skin-selector {
+            display: flex;
+            gap: 15px;
+        }
+
+        .skin-btn {
+            background: #1e1e24;
+            color: #fff;
+            border: 3px solid var(--neon-pink);
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 5px 0 var(--neon-pink);
+            transition: 0.1s;
+        }
+
+        .skin-btn:hover {
+            background: var(--neon-pink);
+            color: #000;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px var(--neon-pink);
+        }
+
+        /* Bandeau de défilement d'effets spéciaux (Ticker supérieur) */
+        .ticker-wrap {
+            position: absolute;
+            top: 15px; left: 0; width: 100%;
+            background: var(--neon-lime);
+            color: #000;
+            overflow: hidden;
+            padding: 6px 0;
+            transform: rotate(-1.5deg);
+            box-shadow: 0 0 25px var(--neon-lime);
+            z-index: 100;
+        }
+
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: tickerMove 20s linear infinite;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        @keyframes tickerMove {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Particules explosives textuelles générées au clic */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 2.5rem;
+            font-weight: bold;
+            animation: burstOut 0.7s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            z-index: 999;
+            text-shadow: 0 0 10px #000;
+        }
+
+        @keyframes burstOut {
+            0% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: translate(var(--mx), var(--my)) scale(1.8) rotate(180deg); }
+        }
+
+        /* 🕺 LE DANSEUR DE TECKTONIK (BOTTOM RIGHT) 🕺 */
+        #tecktonik-dancer {
+            position: fixed;
+            bottom: 30px;
+            right: 40px;
+            width: 140px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            z-index: 200;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 10px;
+            border: 2px solid var(--neon-lime);
+        }
+
+        .dancer-head {
+            font-size: 2.8rem;
+            animation: headDance 0.3s infinite alternate ease-in-out;
+        }
+
+        .dancer-torso {
+            font-size: 3.5rem;
+            position: relative;
+            animation: torsoDance 0.6s infinite alternate ease-in-out;
+        }
+
+        .arm-l, .arm-r {
+            position: absolute;
+            font-size: 2.2rem;
+            top: 5px;
+            transform-origin: center top;
+        }
+
+        .arm-l {
+            left: -30px;
+            animation: tecktonikArmLeft 0.25s infinite linear alternate;
+        }
+
+        .arm-r {
+            right: -30px;
+            animation: tecktonikArmRight 0.25s infinite linear alternate-reverse;
+        }
+
+        .dancer-legs {
+            font-size: 2.8rem;
+            animation: legShuffle 0.4s infinite alternate ease-in-out;
+        }
+
+        .dancer-tag {
+            background: #000;
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        /* Animations Tecktonik millésime 2007 */
+        @keyframes headDance {
+            0% { transform: translateY(0) rotate(-10deg); }
+            100% { transform: translateY(-6px) rotate(10deg); }
+        }
+        @keyframes torsoDance {
+            0% { transform: skewX(-15deg) scaleY(0.9); }
+            100% { transform: skewX(15deg) scaleY(1.1); }
+        }
+        @keyframes tecktonikArmLeft {
+            0% { transform: rotate(45deg) translateY(0); }
+            100% { transform: rotate(-130deg) translateY(-15px) translateX(5px); }
+        }
+        @keyframes tecktonikArmRight {
+            0% { transform: rotate(-45deg) translateY(0); }
+            100% { transform: rotate(130deg) translateY(-15px) translateX(-5px); }
+        }
+        @keyframes legShuffle {
+            0% { transform: translateX(-8px) rotate(-5deg); }
+            100% { transform: translateX(8px) rotate(5deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ticker-wrap">
+        <div class="ticker">
+            ⚡ ALERTE CYBER-BRIQUE DANS L'ESPACE QUANTIQUE ! 🌌 TOURNEMENT DE TEINTE MAXIMAL ! 🥛 LAIT DE L'ESPACE DISPONIBLE ! 🧱 TECKTONIK BOT ACTIVÉ EN BAS À DROITE ! 💥 MULTIPLIEZ LES CLIQUES !
+        </div>
+    </div>
+
+    <div class="grid-bg"></div>
+
+    <div class="game-container">
+        
+        <div class="shop">
+            <h2 style="color: var(--neon-cyan); text-align: center; margin-top: 0;">🏬 ULTRA MAGASIN</h2>
+            <hr style="border-color: var(--neon-pink); border-style: dashed;">
+            
+            <div class="shop-item" onclick="buyUpgrade('clicker', 15, 1)">
+                <strong>🔧 Truelle Laser</strong><br>
+                +1 Brique par clic<br>
+                <span id="cost-clicker" style="color: var(--pastel-yellow); font-weight: bold;">Prix : 15</span>
+            </div>
+
+            <div class="shop-item" onclick="buyUpgrade('milk', 100, 4)">
+                <strong>🥛 Pack de Lait Galactique</strong><br>
+                +4 Briques / sec<br>
+                <span id="cost-milk" style="color: var(--pastel-yellow); font-weight: bold;">Prix : 100</span>
+            </div>
+
+            <div class="shop-item" onclick="buyUpgrade('factory', 600, 32)">
+                <strong>🏢 Briqueterie Orbitale</strong><br>
+                +32 Briques / sec<br>
+                <span id="cost-factory" style="color: var(--pastel-yellow); font-weight: bold;">Prix : 600</span>
+            </div>
+
+            <div class="shop-item" onclick="buyUpgrade('vortex', 2500, 150)">
+                <strong>🌀 Vortex Énergétique</strong><br>
+                +150 Briques / sec<br>
+                <span id="cost-vortex" style="color: var(--pastel-yellow); font-weight: bold;">Prix : 2500</span>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center; font-size: 1rem; color: var(--pastel-purple);">
+                Auto-Production : <span id="bps-display">0</span> /sec
+            </div>
+        </div>
+
+        <div class="click-area">
+            <div class="score-board">
+                <span id="score-display">0</span> BRIQUES<br>
+                <span style="font-size: 1.1rem; color: var(--neon-cyan); letter-spacing: 3px;">PUISSANCE LIQUIDE & SOLIDE</span>
+            </div>
+
+            <div class="brick-wrapper">
+                <div class="brick" id="main-brick" onclick="clickBrick(event)">
+                    <div id="brick-skin-render" class="brick-face skin-construction">
+                        BRIQUE ROUGE 🧱
+                    </div>
+                </div>
+            </div>
+
+            <div class="skin-selector">
+                <button class="skin-btn" onclick="setSkin('construction')">🧱 Chantier</button>
+                <button class="skin-btn" onclick="setSkin('lait')">🥛 Pack Lait</button>
+                <button class="skin-btn" onclick="setSkin('cyber')">🚀 Cyber-Espace</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="tecktonik-dancer">
+        <div class="dancer-head">😎</div>
+        <div class="dancer-torso">
+            👕
+            <div class="arm-l">💪</div>
+            <div class="arm-r">💪</div>
+        </div>
+        <div class="dancer-legs">🕺</div>
+        <div class="dancer-tag">TECKTONIK BOT</div>
+    </div>
+
+    <script>
+        let score = 0;
+        let bricksPerClick = 1;
+        let bricksPerSecond = 0;
+        
+        let currentSkin = 'construction';
+        const skins = {
+            construction: { text: "CHANTIER 🧱", class: "skin-construction", pop: "🧱" },
+            lait: { text: "BRIQUE LAIT 🥛", class: "skin-lait", pop: "🥛" },
+            cyber: { text: "CYBER CORE 🚀", class: "skin-cyber", pop: "⚡" }
+        };
+
+        const upgrades = {
+            clicker: { cost: 15, power: 1, type: 'click' },
+            milk: { cost: 100, power: 4, type: 'sec' },
+            factory: { cost: 600, power: 32, type: 'sec' },
+            vortex: { cost: 2500, power: 150, type: 'sec' }
+        };
+
+        function updateDisplay() {
+            document.getElementById('score-display').innerText = Math.floor(score);
+            document.getElementById('bps-display').innerText = bricksPerSecond;
+        }
+
+        function setSkin(skinName) {
+            currentSkin = skinName;
+            const render = document.getElementById('brick-skin-render');
+            render.className = "brick-face " + skins[skinName].class;
+            render.innerText = skins[skinName].text;
+            
+            // Distorsion flash au changement d'univers
+            document.body.style.transform = `scale(1.05) rotate(${Math.random() * 4 - 2}deg)`;
+            setTimeout(() => document.body.style.transform = "none", 100);
+        }
+
+        function clickBrick(event) {
+            score += bricksPerClick;
+            updateDisplay();
+            
+            // Déclenchement de la secousse d'écran
+            document.body.classList.add('shake');
+            setTimeout(() => document.body.classList.remove('shake'), 120);
+
+            // Génération de l'onde explosive de particules
+            generateParticles(event.clientX, event.clientY);
+        }
+
+        function generateParticles(x, y) {
+            // Créer plusieurs éclats graphiques textuels autour du curseur
+            for(let i = 0; i < 3; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                
+                // Palette de couleurs aléatoires vives
+                const colors = ['#ff6bcb', '#00f0ff', '#baff1a', '#d0bfff', '#fff9a6'];
+                p.style.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Variables de direction CSS aléatoires
+                const mx = (Math.random() * 160 - 80) + 'px';
+                const my = (Math.random() * -160 - 40) + 'px';
+                p.style.setProperty('--mx', mx);
+                p.style.setProperty('--my', my);
+                
+                p.innerText = `+${bricksPerClick} ${skins[currentSkin].pop}`;
+                p.style.left = (x - 20) + 'px';
+                p.style.top = (y - 30) + 'px';
+                
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 700);
+            }
+        }
+
+        function buyUpgrade(id, baseCost, power) {
+            const up = upgrades[id];
+            if (score >= up.cost) {
+                score -= up.cost;
+                if (up.type === 'click') {
+                    bricksPerClick += up.power;
+                } else {
+                    bricksPerSecond += up.power;
+                }
+                
+                // Augmentation exponentielle du prix des technologies
+                up.cost = Math.floor(up.cost * 1.45);
+                document.getElementById(`cost-${id}`).innerText = `Prix : ${up.cost}`;
+                updateDisplay();
+
+                // Flash de couleur inversée psychédélique lors de l'achat
+                document.body.style.filter = "invert(1) hue-rotate(90deg)";
+                setTimeout(() => document.body.style.filter = "", 80);
+            } else {
+                alert("❌ ACCÈS REFUSÉ : Pas assez de briques spatiales !");
+            }
+        }
+
+        // Boucle de mise à jour automatique (ticks fluides)
+        setInterval(() => {
+            if (bricksPerSecond > 0) {
+                score += bricksPerSecond / 10;
+                updateDisplay();
+            }
+        }, 100);
+    </script>
+</body>
+</html>
