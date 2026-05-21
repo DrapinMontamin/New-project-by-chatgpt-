@@ -222,6 +222,34 @@
             padding: 40px 20px;
             box-sizing: border-box;
             z-index: 2;
+            overflow: hidden; /* <--- AJOUTE CECI ICI */
+        }
+        
+        /* --- EFFET BARRES 45° INVERSÉES (MICHAEL JACKSON) --- */
+        .section-amai::before,
+        .section-amai::after {
+            content: '';
+            position: absolute;
+            width: 450px; /* Longueur de la bande */
+            height: 90px; /* Épaisseur de la bande */
+            background-color: #fff; /* Le blanc crée l'inversion parfaite avec le blend-mode */
+            mix-blend-mode: difference; /* C'est cette ligne qui fait la magie ! */
+            z-index: 10; /* Pour passer par-dessus les titres et boutons */
+            pointer-events: none; /* Empêche la barre de bloquer les clics sur les boutons en dessous */
+        }
+
+        /* Barre en haut à gauche */
+        .section-amai::before {
+            top: 60px;
+            left: -120px;
+            transform: rotate(-45deg);
+        }
+
+        /* Barre en bas à droite */
+        .section-amai::after {
+            bottom: 60px;
+            right: -120px;
+            transform: rotate(-45deg);
         }
 
         .grid-floor-amai {
@@ -372,6 +400,12 @@
         <div class="button-container">
             <button class="btn btn-amai" data-url="sites/Amai/UltrakillTerminalThing.html">TERMINAL</button>
             <button class="btn btn-amai" data-url="sites/Amai/UltrakillEffect.html">WEAPONS</button>
+        </div>
+        <h2 class="amai-subtitle">>> RANDOM STUFF <<</h2>
+        <div class="button-container">
+            <button class="btn btn-amai" data-url="sites/Amai/AnimeStyleClick.html">ANIME CLICKER</button>
+            <button class="btn btn-amai" data-url="sites/Amai/BriqueClicker.html">MEGA BRIQUE CLICKER</button>
+            <button class="btn btn-amai" data-url="sites/Amai/BriqueClickerAuCarré.html">BRIQUE CLICKER²</button>
         </div>
     </section>
 
