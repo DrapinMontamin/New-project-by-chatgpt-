@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" description="ChatGPT était en panne dsl les gars">
+    <title>New Project (by ChatGPT et les autres)</title>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff00ea;
+            --neon-yellow: #fff600;
+            --dark-bg: #050505;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            /* Effet disco : variation de couleur globale en continu */
+            animation: disco-bg 6s infinite linear;
+            color: white;
+            font-family: 'Consolas', 'Courier New', monospace;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100vh;
+            box-sizing: border-box;
+            padding: 40px 20px;
+        }
+
+        /* Ambiance Disco / Grille Lumineuse */
+        .grid-floor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.1) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 0, 234, 0.1) 2px, transparent 2px);
+            background-size: 40px 40px;
+            z-index: 1;
+            animation: grid-move 4s infinite linear;
+        }
+
+        @keyframes grid-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        @keyframes disco-bg {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        /* Titre Glitch & Pulsation */
+        h1 {
+            font-size: 4rem;
+            text-transform: uppercase;
+            margin: 0;
+            z-index: 5;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 30px var(--neon-pink);
+            animation: pulse 0.5s infinite alternate;
+            text-align: center;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); text-shadow: 0 0 10px var(--neon-cyan); }
+            100% { transform: scale(1.03); text-shadow: 0 0 30px var(--neon-pink), 0 0 50px var(--neon-cyan); }
+        }
+
+        /* ZONE DENSEUR TECKTONIK */
+        .dancefloor {
+            position: relative;
+            width: 200px;
+            height: 250px;
+            z-index: 5;
+        }
+
+        .dancer {
+            width: 100%;
+            height: 100%;
+            stroke-width: 5;
+            stroke-linecap: round;
+            fill: none;
+        }
+
+        .neon-glow {
+            stroke: var(--neon-cyan);
+            filter: drop-shadow(0 0 8px var(--neon-cyan)) drop-shadow(0 0 15px var(--neon-pink));
+        }
+
+        /* Animations Tecktonik (Mouvements de bras et de corps asymétriques) */
+        .left-arm {
+            animation: tck-left 0.4s infinite alternate ease-in-out;
+            transform-origin: 40px 70px;
+        }
+        .right-arm {
+            animation: tck-right 0.3s infinite alternate ease-in-out;
+            transform-origin: 60px 70px;
+        }
+        .legs {
+            animation: tck-legs 0.2s infinite alternate ease-in-out;
+            transform-origin: 50px 110px;
+        }
+
+        @keyframes tck-left {
+            0% { transform: rotate(0deg) translateY(0); }
+            50% { transform: rotate(-60deg) translateY(-5px); }
+            100% { transform: rotate(40deg) translateX(5px); }
+        }
+
+        @keyframes tck-right {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(80deg) cubic-bezier(0.11, 0, 0, 1); }
+            100% { transform: rotate(-30deg); }
+        }
+
+        @keyframes tck-legs {
+            0% { transform: scaleX(1) translateY(0); }
+            100% { transform: scaleX(1.1) translateY(4px); }
+        }
+
+        /* CONTENEUR BOUTONS EN LIGNE */
+        .button-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+            z-index: 5;
+        }
+
+        /* Boutons Améliorés */
+        .btn {
+            padding: 15px 25px;
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border: 3px solid var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink);
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-family: inherit;
+            position: relative;
+            transition: all 0.2s ease;
+            animation: btn-blink 1s infinite alternate;
+        }
+
+        /* Clignotement alterné pour chaque bouton */
+        .btn:nth-child(2n) { animation-delay: 0.3s; }
+        .btn:nth-child(3n) { animation-delay: 0.6s; }
+
+        @keyframes btn-blink {
+            0% { border-color: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+            50% { border-color: var(--neon-yellow); box-shadow: 0 0 20px var(--neon-yellow); }
+            100% { border-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
+        }
+
+        .btn:hover {
+            background: white;
+            color: var(--dark-bg);
+            box-shadow: 0 0 40px #fff, 0 0 80px var(--neon-pink);
+            transform: scale(1.1) rotate(-1deg);
+            animation: none; /* Stoppe le clignotement pour focus sur le hover */
+        }
+
+        /* Filtres et lignes TV */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.3));
+            background-size: 100% 6px;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-floor"></div>
+    <div class="scanlines"></div>
+
+    <h1 class="glitch" data-text="SELECT_YOUR_DESTINATION">SELECT_YOUR_DESTINATION</h1>
+
+    <div class="dancefloor">
+        <svg class="dancer" viewBox="0 0 100 180">
+            <circle cx="50" cy="40" r="12" class="neon-glow" />
+            <line x1="50" y1="52" x2="50" y2="110" class="neon-glow" />
+            <path d="M 50 65 L 20 50 L 35 25" class="neon-glow left-arm" />
+            <path d="M 50 65 L 80 75 L 65 30" class="neon-glow right-arm" />
+            <g class="legs">
+                <path d="M 50 110 L 30 160 L 15 165" class="neon-glow" />
+                <path d="M 50 110 L 70 160 L 85 165" class="neon-glow" />
+            </g>
+        </svg>
+    </div>
+
+    <div class="button-container"> <!-- C'est ici pour ajouter des liens -->
+        <button class="btn" data-url="sites/terrahill-index.html">TERRAHILL v1</button>
+        <button class="btn" data-url="sites/terrahill-index-chaos.html">TERRAHILL CHAOS</button>
+        <button class="btn" data-url="sites/family-tree.html">FAMILY TREE</button>
+        <button class="btn" data-url="sites/gnome-clicker.html">GNOMISH CLICKER</button>
+    </div>
+
+    <script>
+        const allButtons = document.querySelectorAll('.btn');
+        allButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetUrl = button.getAttribute('data-url');
+                if (targetUrl) {
+                    window.location.href = targetUrl;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

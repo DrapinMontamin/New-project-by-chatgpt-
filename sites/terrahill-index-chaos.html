@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERRAHIL - LENCICLOPEDIIE DU MONDES!!!</title>
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+<style>
+/* ⚠️ AVERTISEMENT : CE SITE PEUT PROVOKER DES CONVUSION ⚠️ */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+@keyframes bgFOLIE {
+  0%   { background: #ff0000; }
+  8%   { background: #ff8800; }
+  16%  { background: #ffff00; }
+  25%  { background: #00ff00; }
+  33%  { background: #00ffff; }
+  41%  { background: #0000ff; }
+  50%  { background: #ff00ff; }
+  58%  { background: #ff0088; }
+  66%  { background: #88ff00; }
+  75%  { background: #00ff88; }
+  83%  { background: #8800ff; }
+  91%  { background: #ff8800; }
+  100% { background: #ff0000; }
+}
+
+@keyframes bgSTROBE {
+  0%,49%  { background: #ffffff; }
+  50%,100%{ background: #000000; }
+}
+
+body {
+  font-family: 'Comic Neue', 'Comic Sans MS', cursive;
+  animation: bgFOLIE 0.4s linear infinite;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text y='28' font-size='28'>🤡</text></svg>") 16 16, auto;
+}
+
+/* ═══ AVERTISSEMENT ═══ */
+#warning {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  background: black; color: #ff0000;
+  font-size: 1.2rem; text-align: center;
+  padding: 6px;
+  animation: warnBlink 0.15s step-end infinite;
+  border-bottom: 4px solid yellow;
+}
+@keyframes warnBlink {
+  0%,49%{ background:black;color:#ff0000; }
+  50%,100%{ background:#ff0000;color:black; }
+}
+
+/* ═══ MARQUEE STRIP ═══ */
+.marquee-strip {
+  width: 100%; overflow: hidden;
+  background: #000;
+  padding: 8px 0;
+  white-space: nowrap;
+  position: relative;
+}
+.marquee-inner {
+  display: inline-block;
+  animation: marqueeScroll 6s linear infinite;
+  font-size: 1.4rem; font-weight: bold;
+}
+.marquee-reverse .marquee-inner {
+  animation: marqueeScrollReverse 4s linear infinite;
+}
+@keyframes marqueeScroll {
+  from { transform: translateX(100vw); }
+  to   { transform: translateX(-100%); }
+}
+@keyframes marqueeScrollReverse {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100vw); }
+}
+
+/* ═══ TITRE PRINCIPAL ═══ */
+#main-title {
+  text-align: center;
+  padding: 30px 10px 10px;
+  position: relative;
+}
+
+#main-title h1 {
+  font-size: clamp(2rem, 10vw, 5rem);
+  text-shadow:
+    3px 3px 0 red,
+    -3px -3px 0 blue,
+    6px 0 0 lime,
+    0 6px 0 yellow;
+  animation: titleSHAKE 0.08s linear infinite, titleCOLOR 0.2s step-end infinite;
+  display: inline-block;
+  transform-origin: center;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+@keyframes titleSHAKE {
+  0%  { transform: translate(0,0) rotate(0deg) skew(0); }
+  20% { transform: translate(-4px,3px) rotate(-3deg) skew(5deg); }
+  40% { transform: translate(4px,-3px) rotate(3deg) skew(-4deg); }
+  60% { transform: translate(-3px,-2px) rotate(-2deg) skew(3deg); }
+  80% { transform: translate(3px,2px) rotate(2deg) skew(-3deg); }
+  100%{ transform: translate(0,0) rotate(0deg) skew(0); }
+}
+@keyframes titleCOLOR {
+  0%  { color: #ffff00; }
+  25% { color: #ff00ff; }
+  50% { color: #00ffff; }
+  75% { color: #ff8800; }
+  100%{ color: #00ff00; }
+}
+
+/* SOUS-TITRE */
+#sous-titre {
+  font-size: clamp(1rem, 4vw, 1.8rem);
+  animation: sousTitreFLIP 2s ease-in-out infinite;
+  display: inline-block;
+  color: white;
+  text-shadow: 2px 2px #ff00ff, -2px -2px #00ffff;
+  margin-top: 10px;
+}
+@keyframes sousTitreFLIP {
+  0%,100%{ transform: scaleX(1); }
+  50%    { transform: scaleX(-1); }
+}
+
+/* ═══ DANSEUR TEKTONIC ═══ */
+#tektonic-wrap {
+  display: flex; justify-content: center;
+  margin: 20px auto;
+  position: relative;
+}
+
+#danseur {
+  position: relative;
+  width: 160px; height: 280px;
+  animation: corps 0.35s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 15px #ff00ff) drop-shadow(0 0 30px #00ffff);
+}
+@keyframes corps {
+  from { transform: translateY(0) rotate(-3deg) scaleX(1); }
+  to   { transform: translateY(-12px) rotate(3deg) scaleX(1.04); }
+}
+
+/* Tête */
+.tete {
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 44px; height: 44px;
+  background: radial-gradient(circle at 40% 35%, #ffe0b0, #d4900a);
+  border-radius: 50%;
+  border: 3px solid #000;
+  animation: teteSECOUE 0.2s ease-in-out infinite alternate;
+  z-index: 10;
+}
+.tete::before { /* cheveux gel tektonik */
+  content: '';
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  width: 36px; height: 22px;
+  background: linear-gradient(to top, #222, #111);
+  clip-path: polygon(0% 100%, 10% 20%, 25% 0%, 40% 30%, 50% 0%, 60% 30%, 75% 0%, 90% 20%, 100% 100%);
+  border-radius: 4px 4px 0 0;
+}
+.tete::after { /* lunettes/bandana */
+  content: '😤';
+  position: absolute; top: 10px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px; line-height: 1;
+}
+@keyframes teteSECOUE {
+  from { transform: translateX(-50%) rotate(-8deg); }
+  to   { transform: translateX(-50%) rotate(8deg); }
+}
+
+/* Corps */
+.buste {
+  position: absolute;
+  top: 46px; left: 50%; transform: translateX(-50%);
+  width: 46px; height: 55px;
+  background: linear-gradient(135deg, #1a00ff, #8800ff);
+  border: 3px solid #000;
+  border-radius: 8px 8px 2px 2px;
+  z-index: 8;
+  animation: bustePUMP 0.35s ease-in-out infinite alternate;
+}
+.buste::before { /* logo sur le t-shirt */
+  content: '⚡';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 22px;
+  animation: logoSPIN 0.4s linear infinite;
+}
+@keyframes logoSPIN { from{transform:translate(-50%,-50%) rotate(0);} to{transform:translate(-50%,-50%) rotate(360deg);} }
+@keyframes bustePUMP {
+  from { transform: translateX(-50%) scaleY(1); }
+  to   { transform: translateX(-50%) scaleY(1.06); }
+}
+
+/* Bassin */
+.bassin {
+  position: absolute;
+  top: 98px; left: 50%; transform: translateX(-50%);
+  width: 48px; height: 22px;
+  background: linear-gradient(135deg, #111, #333);
+  border: 3px solid #000;
+  border-radius: 4px;
+  z-index: 8;
+  animation: bassinROLL 0.35s ease-in-out infinite alternate;
+}
+@keyframes bassinROLL {
+  from { transform: translateX(-50%) rotate(-6deg); }
+  to   { transform: translateX(-50%) rotate(6deg); }
+}
+
+/* Jambes */
+.jambe {
+  position: absolute;
+  top: 118px;
+  width: 20px; height: 80px;
+  background: linear-gradient(to bottom, #111, #333);
+  border: 2px solid #000;
+  border-radius: 4px;
+  z-index: 7;
+  transform-origin: top center;
+}
+.jambe.gauche {
+  left: 38px;
+  animation: jambeG 0.35s ease-in-out infinite alternate;
+}
+.jambe.droite {
+  left: 102px;
+  animation: jambeD 0.35s ease-in-out infinite alternate;
+}
+@keyframes jambeG {
+  from { transform: rotate(-12deg) translateX(-4px); }
+  to   { transform: rotate(5deg) translateX(2px); }
+}
+@keyframes jambeD {
+  from { transform: rotate(12deg) translateX(4px); }
+  to   { transform: rotate(-5deg) translateX(-2px); }
+}
+
+/* Chaussures */
+.chaussure {
+  position: absolute;
+  bottom: -14px; left: 50%; transform: translateX(-50%);
+  width: 30px; height: 14px;
+  background: linear-gradient(135deg, #ff0000, #cc0000);
+  border: 2px solid #000;
+  border-radius: 0 8px 8px 0;
+}
+
+/* ═══ BRAS TEKTONIC ═══ */
+.bras-wrap {
+  position: absolute;
+  top: 50px;
+  width: 80px; height: 20px;
+  z-index: 9;
+}
+.bras-wrap.gauche {
+  left: -38px;
+  transform-origin: right center;
+  animation: brasGaucheHAUTE 0.35s ease-in-out infinite alternate;
+}
+.bras-wrap.droite {
+  left: 118px;
+  transform-origin: left center;
+  animation: brasDroiteHAUTE 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes brasGaucheHAUTE {
+  from { transform: rotate(-100deg); }
+  to   { transform: rotate(-30deg); }
+}
+@keyframes brasDroiteHAUTE {
+  from { transform: rotate(100deg); }
+  to   { transform: rotate(30deg); }
+}
+
+.bras-haut {
+  position: absolute;
+  top: 0; left: 0;
+  width: 45px; height: 14px;
+  background: linear-gradient(to right, #ffe0b0, #d4900a);
+  border: 2px solid #000;
+  border-radius: 8px;
+  transform-origin: left center;
+}
+.bras-wrap.gauche .bras-haut { transform-origin: right center; left: auto; right: 0; }
+
+.avant-bras {
+  position: absolute;
+  top: 0;
+  width: 38px; height: 12px;
+  background: linear-gradient(to right, #ffe0b0, #d4900a);
+  border: 2px solid #000;
+  border-radius: 6px;
+  transform-origin: left center;
+}
+.bras-wrap.gauche .avant-bras {
+  left: 0;
+  animation: avantBrasG 0.35s ease-in-out infinite alternate;
+}
+.bras-wrap.droite .avant-bras {
+  left: 38px;
+  animation: avantBrasD 0.35s ease-in-out infinite alternate;
+}
+@keyframes avantBrasG {
+  from { transform: rotate(-80deg); }
+  to   { transform: rotate(20deg); }
+}
+@keyframes avantBrasD {
+  from { transform: rotate(80deg); }
+  to   { transform: rotate(-20deg); }
+}
+
+.main {
+  position: absolute; top:-6px;
+  font-size: 16px; line-height: 1;
+}
+.bras-wrap.gauche .main { left: -4px; }
+.bras-wrap.droite .main { right: -4px; }
+
+/* ═══ EFFET LUMIÈRE DISCOTHÈQUE ═══ */
+#disco-lights {
+  position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  overflow: hidden;
+}
+.spotlight {
+  position: absolute;
+  width: 200px; height: 600px;
+  border-radius: 50%;
+  opacity: 0.15;
+  mix-blend-mode: screen;
+  animation: spotMove var(--dur,4s) ease-in-out infinite alternate;
+  transform-origin: top center;
+}
+@keyframes spotMove {
+  from { transform: rotate(var(--from,-30deg)); }
+  to   { transform: rotate(var(--to,30deg)); }
+}
+
+/* ═══ CARTES DE NAV ═══ */
+#nav-zone {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  position: relative;
+  z-index: 10;
+}
+
+.nav-card {
+  width: 240px;
+  padding: 20px;
+  border: 6px dashed;
+  border-radius: 12px;
+  text-decoration: none;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 10px;
+  position: relative; overflow: hidden;
+  transition: transform 0.1s;
+  animation: cardWIGGLE var(--wiggle-dur, 2s) ease-in-out infinite;
+}
+.nav-card:hover {
+  transform: scale(1.15) rotate(var(--hover-rot, 5deg)) !important;
+  z-index: 99;
+}
+
+@keyframes cardWIGGLE {
+  0%,100%{ transform: rotate(var(--rot-a,-3deg)) scale(1); }
+  50%    { transform: rotate(var(--rot-b,3deg)) scale(1.04); }
+}
+
+.card-enc {
+  background: linear-gradient(135deg, #ff000033, #ffff0033);
+  border-color: #ff0000;
+  color: #ffff00;
+  --rot-a: -4deg; --rot-b: 4deg; --hover-rot: 6deg;
+  --wiggle-dur: 1.8s;
+  animation: cardWIGGLE 1.8s ease-in-out infinite, cardBGENC 0.3s step-end infinite;
+}
+@keyframes cardBGENC {
+  0%  { box-shadow: 0 0 30px #ff0000, 0 0 60px #ff000066; }
+  50% { box-shadow: 0 0 30px #ffff00, 0 0 60px #ffff0066; }
+}
+.card-pan {
+  background: linear-gradient(135deg, #8800ff33, #ff00ff33);
+  border-color: #ff00ff;
+  color: #00ffff;
+  --rot-a: 3deg; --rot-b: -3deg; --hover-rot: -5deg;
+  --wiggle-dur: 1.3s;
+  animation: cardWIGGLE 1.3s ease-in-out infinite, cardBGPAN 0.25s step-end infinite;
+}
+@keyframes cardBGPAN {
+  0%  { box-shadow: 0 0 30px #ff00ff, 0 0 60px #ff00ff66; }
+  50% { box-shadow: 0 0 30px #00ffff, 0 0 60px #00ffff66; }
+}
+.card-his {
+  background: linear-gradient(135deg, #00ff0033, #0088ff33);
+  border-color: #00ff00;
+  color: #ff8800;
+  --rot-a: -5deg; --rot-b: 2deg; --hover-rot: 8deg;
+  --wiggle-dur: 2.2s;
+  animation: cardWIGGLE 2.2s ease-in-out infinite, cardBGHIS 0.35s step-end infinite;
+}
+@keyframes cardBGHIS {
+  0%  { box-shadow: 0 0 30px #00ff00, 0 0 60px #00ff0066; }
+  50% { box-shadow: 0 0 30px #0088ff, 0 0 60px #0088ff66; }
+}
+
+.card-icon-big {
+  font-size: 3.5rem;
+  animation: iconSPIN 0.4s linear infinite;
+  display: block;
+}
+@keyframes iconSPIN { from{transform:rotate(0);} to{transform:rotate(360deg);} }
+
+.card-title {
+  font-size: 1.4rem; font-weight: bold;
+  text-shadow: 3px 3px 0 black;
+  animation: titlBLINK 0.2s step-end infinite;
+  text-align: center;
+}
+@keyframes titlBLINK {
+  0%,49%{ opacity:1; } 50%,100%{ opacity:0.7; }
+}
+
+.card-desc {
+  font-size: 0.82rem;
+  text-align: center; line-height: 1.5;
+  color: white;
+  text-shadow: 1px 1px 0 black;
+}
+
+/* BADGE UNDER CONSTRUCTION */
+.wip-badge {
+  position: absolute; top: -8px; right: -8px;
+  background: #ff0000; color: white;
+  font-size: 0.55rem; font-weight: bold;
+  padding: 3px 7px; border-radius: 20px;
+  border: 2px solid #ffff00;
+  animation: wipROT 0.5s linear infinite;
+  transform-origin: center;
+  letter-spacing: 0.05em;
+}
+@keyframes wipROT { 0%{transform:rotate(0)scale(1);} 50%{transform:rotate(180deg)scale(1.2);} 100%{transform:rotate(360deg)scale(1);} }
+
+/* ═══ PHRASE COUPÉE ═══ */
+.phrase-coupee {
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  color: white;
+  text-align: center;
+  padding: 8px 20px;
+  text-shadow: 2px 2px 0 black;
+  animation: phraseJIGGLE 0.25s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes phraseJIGGLE {
+  0%,100%{ transform: translate(0,0) rotate(0); }
+  25%    { transform: translate(-2px,1px) rotate(-1deg); }
+  75%    { transform: translate(2px,-1px) rotate(1deg); }
+}
+
+/* ═══ BLOC TEXTE RIDICULE ═══ */
+.bloc-texte {
+  background: rgba(0,0,0,0.6);
+  border: 4px solid;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 14px auto;
+  max-width: 700px;
+  position: relative;
+  animation: blocBORDER 0.3s step-end infinite;
+}
+@keyframes blocBORDER {
+  0%  { border-color: #ff0000; }
+  20% { border-color: #ffff00; }
+  40% { border-color: #00ff00; }
+  60% { border-color: #00ffff; }
+  80% { border-color: #ff00ff; }
+}
+.bloc-texte p {
+  color: white; font-size: 1rem; line-height: 1.8;
+  text-shadow: 1px 1px 0 black;
+}
+.bloc-texte p b {
+  animation: motBLINK 0.15s step-end infinite;
+}
+@keyframes motBLINK { 0%,49%{color:#ffff00;} 50%,100%{color:#ff00ff;} }
+
+/* ═══ COMPTEUR INUTILE ═══ */
+#compteur-inutile {
+  text-align: center;
+  font-size: 2.5rem; color: #ffff00;
+  text-shadow: 3px 3px #ff0000;
+  padding: 10px;
+  animation: compSHAKE 0.1s linear infinite;
+}
+@keyframes compSHAKE {
+  0%  { transform: translate(0,0); }
+  25% { transform: translate(-3px,2px); }
+  50% { transform: translate(3px,-2px); }
+  75% { transform: translate(-2px,-3px); }
+  100%{ transform: translate(2px,3px); }
+}
+
+/* ═══ MISE À JOUR ═══ */
+.update-section {
+  max-width: 700px; margin: 20px auto;
+  padding: 0 16px;
+}
+.update-title {
+  font-size: 1.6rem; color: #ffff00;
+  text-align: center;
+  text-shadow: 3px 3px #ff0000;
+  animation: updateROT 3s ease-in-out infinite;
+  display: inline-block; width: 100%;
+}
+@keyframes updateROT {
+  0%,100%{ transform: rotate(-2deg); }
+  50%    { transform: rotate(2deg) scale(1.05); }
+}
+.update-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  color: white; font-size: 0.95rem;
+  padding: 5px 0;
+  text-shadow: 1px 1px 0 black;
+  animation: itemSLIDE var(--delay,0s) ease-in-out infinite;
+}
+@keyframes itemSLIDE {
+  0%,100%{ letter-spacing: 0; }
+  50%    { letter-spacing: 0.15em; }
+}
+.bullet {
+  font-size: 1.2rem;
+  animation: bulletSPIN 0.3s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+@keyframes bulletSPIN { from{transform:rotate(0);} to{transform:rotate(360deg);} }
+
+.update-link {
+  color: #00ffff;
+  text-decoration: none;
+  text-shadow: 0 0 8px #00ffff;
+  animation: linkBLINK 0.4s step-end infinite;
+}
+@keyframes linkBLINK { 0%,49%{color:#00ffff;} 50%,100%{color:#ff00ff;} }
+.update-link:hover { color: #ffff00; font-size: 1.2em; }
+
+/* ═══ CRÉDITS ═══ */
+.credits {
+  text-align: center; padding: 20px;
+  font-size: 0.9rem; color: white;
+  background: rgba(0,0,0,0.5);
+  margin: 10px;
+  border-radius: 8px;
+  animation: creditsWOBBLE 1s ease-in-out infinite;
+}
+@keyframes creditsWOBBLE {
+  0%,100%{ transform: skewX(0) skewY(0); }
+  25%    { transform: skewX(3deg) skewY(-1deg); }
+  75%    { transform: skewX(-3deg) skewY(1deg); }
+}
+.credits a { color: #ffff00; text-shadow: 0 0 10px #ffff00; text-decoration: underline wavy red; }
+
+/* ═══ EASTER EGG BUTTON ═══ */
+.secret-btn {
+  display: inline-block;
+  background: radial-gradient(circle, #ff0000, #8800ff);
+  color: white; font-size: 1.1rem;
+  padding: 14px 28px; border: 4px dashed #ffff00;
+  border-radius: 50px; text-decoration: none;
+  margin: 10px auto; display: block; width: fit-content;
+  animation: btnPULSE 0.3s ease-in-out infinite alternate,
+             btnROT 5s linear infinite;
+  cursor: pointer;
+}
+@keyframes btnPULSE {
+  from { transform: scale(1) rotate(-2deg); box-shadow: 0 0 20px #ff0000; }
+  to   { transform: scale(1.12) rotate(2deg); box-shadow: 0 0 50px #ff00ff, 0 0 80px #8800ff; }
+}
+@keyframes btnROT {
+  0%,100%{ filter: hue-rotate(0deg) saturate(2); }
+  50%    { filter: hue-rotate(360deg) saturate(3); }
+}
+
+/* ═══ ÉTOILES QUI TOMBENT ═══ */
+.falling-star {
+  position: fixed; top: -20px; z-index: 4; pointer-events: none;
+  font-size: 1.4rem;
+  animation: fallStar var(--fdur,4s) linear var(--fdel,0s) infinite;
+}
+@keyframes fallStar {
+  from { transform: translateY(-30px) rotate(0deg); opacity: 1; }
+  to   { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* ═══ ZONE SCROLL HORIZONTAL ═══ */
+.h-scroll-zone {
+  white-space: nowrap; overflow: hidden;
+  padding: 10px 0; width: 100%;
+}
+.h-scroll-inner {
+  display: inline-block;
+  animation: hScroll 3s linear infinite;
+  font-size: 2rem;
+}
+@keyframes hScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ═══ FOOTER ═══ */
+footer {
+  text-align: center; padding: 20px;
+  font-size: 0.75rem;
+  color: white; background: black;
+  letter-spacing: 0.1em;
+  animation: footerCOLOR 0.5s step-end infinite;
+}
+@keyframes footerCOLOR {
+  0%  { color:#ff0000; } 20%{ color:#ffff00; }
+  40% { color:#00ff00; } 60%{ color:#00ffff; }
+  80% { color:#ff00ff; } 100%{ color:#ff0000; }
+}
+
+/* ═══ FLASH OVERLAY ═══ */
+#flash-overlay {
+  position: fixed; inset:0; z-index:8; pointer-events:none;
+  animation: flashFOU 0.12s step-end infinite;
+  mix-blend-mode: color-dodge;
+}
+@keyframes flashFOU {
+  0%  { background: transparent; }
+  10% { background: #ff000015; }
+  20% { background: transparent; }
+  30% { background: #00ff0015; }
+  40% { background: transparent; }
+  50% { background: #0000ff18; }
+  60% { background: transparent; }
+  70% { background: #ff00ff12; }
+  80% { background: transparent; }
+  90% { background: #ffff0015; }
+  100%{ background: transparent; }
+}
+
+/* ═══ ZONE PRINCIPALE ═══ */
+main { position: relative; z-index: 10; padding-bottom: 40px; }
+</style>
+</head>
+<body>
+
+<!-- FLASH OVERLAY -->
+<div id="flash-overlay"></div>
+
+<!-- SPOTLIGHTS DISCOTHÈQUE -->
+<div id="disco-lights">
+  <div class="spotlight" style="left:15%;top:0;background:#ff0000;--dur:2.1s;--from:-40deg;--to:20deg;"></div>
+  <div class="spotlight" style="left:45%;top:0;background:#00ffff;--dur:1.6s;--from:-20deg;--to:40deg;"></div>
+  <div class="spotlight" style="left:75%;top:0;background:#ff00ff;--dur:2.8s;--from:-50deg;--to:10deg;"></div>
+  <div class="spotlight" style="left:30%;top:0;background:#ffff00;--dur:1.3s;--from:10deg;--to:-30deg;"></div>
+  <div class="spotlight" style="left:60%;top:0;background:#00ff00;--dur:3.2s;--from:-25deg;--to:45deg;"></div>
+</div>
+
+<!-- ÉTOILES QUI TOMBENT -->
+<div class="falling-star" style="left:5%;--fdur:3.2s;--fdel:0s;">⭐</div>
+<div class="falling-star" style="left:15%;--fdur:4.1s;--fdel:1.2s;">🌟</div>
+<div class="falling-star" style="left:27%;--fdur:2.8s;--fdel:0.5s;">💫</div>
+<div class="falling-star" style="left:38%;--fdur:5s;--fdel:2s;">✨</div>
+<div class="falling-star" style="left:52%;--fdur:3.5s;--fdel:0.3s;">⚡</div>
+<div class="falling-star" style="left:63%;--fdur:4.4s;--fdel:1.7s;">🔥</div>
+<div class="falling-star" style="left:74%;--fdur:2.6s;--fdel:0.8s;">💥</div>
+<div class="falling-star" style="left:86%;--fdur:3.9s;--fdel:2.4s;">🌈</div>
+<div class="falling-star" style="left:92%;--fdur:4.7s;--fdel:0.1s;">💎</div>
+
+<!-- AVERTISSEMENT -->
+<div id="warning">⚠️ AVERTISEMENT : CE SITE PEUX FAIRE CONVULSER LES EPILEPTIKQUE ⚠️ — MAIS ON SEN FOU KE TU LIS PA ÇA KELTORIK C'EST TROP COOL &nbsp;&nbsp;&nbsp; ⚠️ AVERTISEMENT : CE SITE PEUX FAIRE CONVULSER LES EPILEPTIKQUE ⚠️</div>
+
+<main style="padding-top:50px;">
+
+  <!-- MARQUEE 1 -->
+  <div class="marquee-strip" style="background:linear-gradient(to right,#ff0000,#ff8800,#ffff00);">
+    <div class="marquee-inner" style="color:black;">
+      🍄 BIENVENU SUR TERRAHIL 🍄 &nbsp;&nbsp;&nbsp; LENCICLOPEDIIE DU MONDES !!! &nbsp;&nbsp;&nbsp; KLIKEZ ICI PAS LA &nbsp;&nbsp;&nbsp; 🌍 LE MEILLEUR SITE DE TOUT LES UNIVERS 🌍 &nbsp;&nbsp;&nbsp; CRÉER PAR JEAN-KÉVIN ET SES AMIS &nbsp;&nbsp;&nbsp; 🍄 BIENVENU SUR TERRAHIL 🍄 &nbsp;&nbsp;&nbsp; LENCICLOPEDIIE DU MONDES !!!
+    </div>
+  </div>
+
+  <!-- TITRE -->
+  <div id="main-title">
+    <h1>ARCHIV<br>PUBLIK DE<br>TERRAHIL !!</h1>
+    <div id="sous-titre">
+      lemedieu site d'un monde <span style="animation:titlBLINK 0.1s step-end infinite;display:inline-block;color:#ff0000;">PASIONANT</span> et<br>regorgeant dhistoire et de
+    </div>
+  </div>
+
+  <!-- SCROLL HORIZONTAL ÉMOJIS -->
+  <div class="h-scroll-zone">
+    <div class="h-scroll-inner">
+      🧙‍♂️🗡️🐉🏰⚔️🧝🌋🦄🔮💀🧟🌊🗺️👑🍄🧙‍♂️🗡️🐉🏰⚔️🧝🌋🦄🔮💀🧟🌊🗺️👑🍄🧙‍♂️🗡️🐉🏰⚔️🧝🌋🦄🔮💀🧟🌊🗺️👑🍄
+    </div>
+  </div>
+
+  <!-- MARQUEE 2 -->
+  <div class="marquee-strip marquee-reverse" style="background:linear-gradient(to right,#8800ff,#ff00ff,#00ffff);">
+    <div class="marquee-inner" style="color:white;">
+      👁️ DATE ACTUELE DANS TERRAHIL ET L'AUTRE MONDES : 12 FEVRYER 831 👁️ &nbsp;&nbsp;&nbsp; LE DIEU DU TEMPS CONFIRME CETTE DATÉ &nbsp;&nbsp;&nbsp; OU PEUT-ETRE PAS &nbsp;&nbsp;&nbsp; 👁️ DATE ACTUELE DANS TERRAHIL ET L'AUTRE MONDES : 12 FEVRYER 831 👁️
+    </div>
+  </div>
+
+  <!-- DANSEUR TEKTONIC + TEXTE -->
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:20px;padding:10px 20px;">
+
+    <!-- DANSEUR -->
+    <div id="tektonic-wrap">
+      <div id="danseur">
+        <!-- TÊTE -->
+        <div class="tete"></div>
+
+        <!-- BRAS GAUCHE -->
+        <div class="bras-wrap gauche">
+          <div class="bras-haut"></div>
+          <div class="avant-bras"></div>
+          <span class="main">🤙</span>
+        </div>
+
+        <!-- BRAS DROIT -->
+        <div class="bras-wrap droite">
+          <div class="bras-haut"></div>
+          <div class="avant-bras"></div>
+          <span class="main">🤙</span>
+        </div>
+
+        <!-- CORPS -->
+        <div class="buste"></div>
+        <div class="bassin"></div>
+
+        <!-- JAMBE GAUCHE -->
+        <div class="jambe gauche">
+          <div class="chaussure"></div>
+        </div>
+
+        <!-- JAMBE DROITE -->
+        <div class="jambe droite">
+          <div class="chaussure"></div>
+        </div>
+      </div>
+      <div style="text-align:center;color:white;font-size:0.75rem;text-shadow:1px 1px black;margin-top:8px;animation:phraseJIGGLE 0.3s infinite;">
+        🕺 TEKTONIK MASTER 3000 🕺<br>
+        <span style="font-size:0.6rem;color:#ffff00;">il danse pour l'éterniter</span>
+      </div>
+    </div>
+
+    <!-- PHRASE COUPÉE + DESCRIPTION -->
+    <div style="max-width:360px;">
+      <div class="bloc-texte">
+        <p>
+          D'ici vous pouvé accéder à toutes (ou presque tou) les info sur le monde <b>pasionant</b>, vaste et regorgeant d'histoire de Terrahil.<br><br>
+          L'énciclopédie d'un vaste monde décri toute l'histoire des lieu, personnage et organisation connue du<br><br>
+          <span style="font-size:1.4rem;color:#ff0000;animation:motBLINK 0.1s step-end infinite;display:inline-block;">... SUITE PAGE SUIVANTE</span>
+        </p>
+      </div>
+      <div class="phrase-coupee">
+        ✨ "le monde est grand et plein de myst-" ✨
+      </div>
+    </div>
+
+  </div>
+
+  <!-- COMPTEUR INUTILE -->
+  <div id="compteur-inutile">
+    👁️ VISITEURS CONNECTÉ EN DIRECT : <span id="nb-visiteurs">1337</span> 👁️
+  </div>
+
+  <!-- CARTES DE NAV -->
+  <div id="nav-zone">
+
+    <a href="https://encyclopedie-terrahill.netlify.app/Terrahill - L'encyclopédie.html" class="nav-card card-enc">
+      <div class="wip-badge">🚧 WIP 🚧</div>
+      <span class="card-icon-big">📜</span>
+      <div class="card-title">L'ENCICLOPÉDI</div>
+      <p class="card-desc">les lieux les personages et les organisation du monde de terrahil et aussi les truc impotants koi quoi</p>
+    </a>
+
+    <a href="https://encyclopedie-terrahill.netlify.app/Terrahill - Le Panthéon.html" class="nav-card card-pan">
+      <div class="wip-badge">⚡ NEW ⚡</div>
+      <span class="card-icon-big">⚡</span>
+      <div class="card-title">LE PANTHÉON!!!</div>
+      <p class="card-desc">les dieux connu de terrahil, de l'autre monde et des plans asoci... asocié... associé (jsp si jai bon)</p>
+    </a>
+
+    <a href="https://encyclopedie-terrahill.netlify.app/Terrahill - Histoire.html" class="nav-card card-his">
+      <div class="wip-badge">📖 LITEU !</div>
+      <span class="card-icon-big">🌍</span>
+      <div class="card-title">L'HISTOIR</div>
+      <p class="card-desc">toute l'historire connue du monde de terrahil et des plans asocié... et ya plein de trucs qui se passes et</p>
+    </a>
+
+  </div>
+
+  <!-- MARQUEE 3 -->
+  <div class="marquee-strip" style="background:black;margin:10px 0;">
+    <div class="marquee-inner" style="color:#00ff00;font-size:1.1rem;">
+      ██ MISE A JOUR DU &nbsp; LUNDI 11/05/26 ██ &nbsp;&nbsp; ajout des GAIGNARD à l'indexe &nbsp;&nbsp; ██ &nbsp;&nbsp; GREMNYR LE PAISIBLE (trankil le gas) &nbsp;&nbsp; ██ &nbsp;&nbsp; mode mise à mort des fautes d'ortograf ACTIVÉE ☠️ &nbsp;&nbsp; ██ &nbsp;&nbsp; ajout de PLEIN d'easter eggs 😈 &nbsp;&nbsp; ██ MISE A JOUR DU &nbsp; LUNDI 11/05/26 ██
+    </div>
+  </div>
+
+  <!-- BLOC MISE À JOUR -->
+  <div class="update-section">
+    <div class="update-title">📣 NOTE DE MIZE A JOUR 📣</div>
+
+    <div class="bloc-texte" style="margin-top:12px;">
+      <div class="update-item" style="--delay:0s;">
+        <span class="bullet">🔴</span>
+        Section des personnages : ajout des <a href="https://encyclopedie-terrahill.netlify.app/Terrahill - L'encyclopédie.html#Gaignard" class="update-link">Gaignard</a> à l'index (enfiiiin !!)
+      </div>
+      <div class="update-item" style="--delay:0.1s;">
+        <span class="bullet">🟡</span>
+        <a href="https://encyclopedie-terrahill.netlify.app/Terrahill - L'encyclopédie.html#Gremnyr" class="update-link">Gremnyr le paisible</a> (lui il est trankil)
+      </div>
+      <div class="update-item" style="--delay:0.2s;">
+        <span class="bullet">🟢</span>
+        Agrémantation dans la page sur l'histoir de Terrahil (ya du contenu mntnt)
+      </div>
+      <div class="update-item" style="--delay:0.3s;">
+        <span class="bullet">🔵</span>
+        Refonte de l'organizassion des blocs pour les téléfone (genre ça marche mieux?)
+      </div>
+      <div class="update-item" style="--delay:0.4s;">
+        <span class="bullet">💀</span>
+        Mode mise à mort des fautes d'ortograf aktivée ☠️ (kil en reste quand même ptdr)
+      </div>
+      <div class="update-item" style="--delay:0.5s;">
+        <span class="bullet">🔪</span>
+        Mise à la potense des fautes de CETTE page (rip)
+      </div>
+      <div class="update-item" style="--delay:0.6s;">
+        <span class="bullet">⚔️</span>
+        Décapitassion des fautes entre L'Archipe Téhene et Mérehatt
+      </div>
+      <div class="update-item" style="--delay:0.7s;">
+        <span class="bullet">🚀</span>
+        Optimisassion du code (jsp si ça a marché)
+      </div>
+      <div class="update-item" style="--delay:0.8s;">
+        <span class="bullet">🎣</span>
+        Création d'un Webhook (le truc vert là)
+      </div>
+      <div class="update-item" style="--delay:0.9s;">
+        <span class="bullet">😈</span>
+        Ajout d'une grande masse d'Easter Eggs 😈 (cherche bien si tu trouve rien ta)
+      </div>
+
+      <div style="margin-top:16px;padding-top:10px;border-top:2px dashed #ffffff44;">
+        <div class="phrase-coupee" style="font-size:0.8rem;padding:0;">
+          Dernière mise à jour : <b style="color:#ffff00;">Lundi 11/05/26 à 21:00</b> &nbsp;—&nbsp; prochain update : <b style="color:#ff8800;">jsp peut être demain ou dans 2 ans</b>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRÉDITS -->
+  <div style="padding:0 16px;">
+    <div class="credits">
+      Site réalizé par <a href="https://encyclopedie-terrahill.netlify.app/Terrahill - L'encyclopédie.html#Yann">Yann Sorel--Pailhes</a> avec la participassion pour la créassion de l'histoir de Terrahil de <a href="https://encyclopedie-terrahill.netlify.app/Terrahill - L'encyclopédie.html#Mathéo">Mathéo Gaignard</a>, <a href="https://encyclopedie-terrahill.netlify.app/Terrahill - L'encyclopédie.html#Thomas">Thomas Olivier</a>, <a href="https://encyclopedie-terrahill.netlify.app/Terrahill - L'encyclopédie.html#Hugo">Hugo Vildey</a> et Noemie Foulon.<br>
+      <span style="font-size:0.75rem;opacity:0.7;">(mersi a eux sinon y'aurait rien koi)</span>
+    </div>
+  </div>
+
+  <!-- SECRET -->
+  <div style="text-align:center;margin:16px 0;">
+    <a href="https://encyclopedie-terrahill.netlify.app/Terrahill - Secrets.html" class="secret-btn">
+      🔒 LES SEKRETS — ACCÈDER (si t'osé) 🔒
+    </a>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  ✦ ARCHIV PUBLIK DE TERRAHIL ✦ OMNIA TERRAHIL ✦ FAIT AVEC LES PIEDS ET BAUCOUP D'AMOUR ✦ © 831 APR TERRAHIL TOUS DROITS REZERVÉ ✦
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════
+// COMPTEUR DE VISITEURS BIDON
+// ═══════════════════════════════════════════════
+const nb = document.getElementById('nb-visiteurs');
+setInterval(() => {
+  const current = parseInt(nb.textContent);
+  const delta = Math.floor(Math.random()*7) - 2;
+  nb.textContent = Math.max(1, current + delta);
+  nb.style.color = `hsl(${Math.random()*360},100%,60%)`;
+}, 800);
+
+// ═══════════════════════════════════════════════
+// DANSEUR — COULEUR ALÉATOIRE DES VÊTEMENTS
+// ═══════════════════════════════════════════════
+const buste = document.querySelector('.buste');
+const colors = ['#1a00ff','#aa0000','#007700','#880088','#cc4400','#004488'];
+let ci = 0;
+setInterval(() => {
+  ci = (ci+1)%colors.length;
+  buste.style.background = `linear-gradient(135deg, ${colors[ci]}, ${colors[(ci+2)%colors.length]})`;
+}, 400);
+
+// ═══════════════════════════════════════════════
+// RUNES QUI CHANGENT
+// ═══════════════════════════════════════════════
+const runes = ['ᚦ','ᚫ','ᚱ','ᚲ','ᚺ','ᛁ','ᛚ','ᚾ','ᚷ','ᛏ','ᛒ','ᛖ','ᛗ','ᚨ','ᚢ','ᛊ','ᚻ'];
+// (purely decorative, les cartes font le boulot)
+
+// ═══════════════════════════════════════════════
+// CURSOR RANDOM
+// ═══════════════════════════════════════════════
+const cursors = ['🤡','🍄','💀','👁️','🔥','⚡','🎪','🤙'];
+setInterval(() => {
+  const c = cursors[Math.floor(Math.random()*cursors.length)];
+  document.body.style.cursor = `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text y='28' font-size='28'>${c}</text></svg>") 16 16, auto`;
+}, 600);
+
+// ═══════════════════════════════════════════════
+// HOVER CARTES — SONS VISUELS
+// ═══════════════════════════════════════════════
+document.querySelectorAll('.nav-card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    for (let i = 0; i < 8; i++) {
+      const star = document.createElement('div');
+      star.style.cssText = `
+        position:fixed;
+        left:${Math.random()*100}vw;
+        top:${Math.random()*100}vh;
+        font-size:${1+Math.random()*2}rem;
+        pointer-events:none;
+        z-index:999;
+        animation:fallStar ${0.5+Math.random()}s linear forwards;
+      `;
+      star.textContent = ['✨','💥','⭐','🌟','💫','🔥'][Math.floor(Math.random()*6)];
+      document.body.appendChild(star);
+      setTimeout(() => star.remove(), 1000);
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════
+// TITRE QUI CHANGE DE TAILLE ALÉATOIREMENT
+// ═══════════════════════════════════════════════
+const h1 = document.querySelector('#main-title h1');
+setInterval(() => {
+  h1.style.letterSpacing = (Math.random()*0.2-0.05)+'em';
+  h1.style.lineHeight = (1+Math.random()*0.3).toString();
+}, 200);
+</script>
+</body>
+</html>
