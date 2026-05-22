@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blåhaj — Wikipédia</title>
+    <style>
+        /* === CODES COULEURS & FONT WIKIPEDIA === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 0 !important; /* Pas de coins ronds ici non plus ! */
+        }
+
+        body {
+            font-family: sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #202122;
+            background-color: #f6f6f6;
+            padding: 0;
+        }
+
+        /* === STRUCTURE WIKIPEDIA === */
+        #global-container {
+            display: flex;
+            min-height: 100vh;
+            background-color: #ffffff;
+            max-width: 1400px;
+            margin: 0 auto;
+            border-left: 1px solid #a2a9b1;
+            border-right: 1px solid #a2a9b1;
+        }
+
+        /* Barre latérale gauche (Faux menu) */
+        #mw-navigation {
+            width: 160px;
+            padding: 15px 10px;
+            background-color: #f6f6f6;
+            font-size: 12px;
+            border-right: 1px solid #a2a9b1;
+            flex-shrink: 0;
+        }
+
+        #mw-navigation .logo {
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 25px;
+            display: block;
+            color: #000;
+            text-decoration: none;
+        }
+
+        #mw-navigation ul {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        #mw-navigation ul li {
+            margin-bottom: 6px;
+        }
+
+        #mw-navigation ul li a {
+            color: #0645ad;
+            text-decoration: none;
+        }
+
+        #mw-navigation ul li a:hover {
+            text-decoration: underline;
+        }
+
+        #mw-navigation .nav-title {
+            color: #54595d;
+            border-top: 1px solid #c8ccd1;
+            margin-top: 10px;
+            padding-top: 4px;
+            font-weight: bold;
+        }
+
+        /* Zone de contenu principale */
+        #content {
+            flex-grow: 1;
+            padding: 20px 40px;
+            background-color: #ffffff;
+        }
+
+        /* En-tête de la page */
+        .firstHeading {
+            font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+            font-size: 28px;
+            font-weight: normal;
+            border-bottom: 1px solid #a2a9b1;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+
+        .siteSub {
+            font-size: 12px;
+            color: #54595d;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        /* Liens bleus Wikipédia */
+        a {
+            color: #0645ad;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        /* === INFOBOX (Le tableau à droite) === */
+        .infobox {
+            float: right;
+            width: 290px;
+            background-color: #f8f9fa;
+            border: 1px solid #a2a9b1;
+            padding: 5px;
+            margin-left: 20px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .infobox-title {
+            background-color: #cedff2;
+            text-align: center;
+            font-weight: bold;
+            font-size: 15px;
+            padding: 5px 0;
+            border: 1px solid #a2a9b1;
+        }
+
+        .infobox-image-box {
+            text-align: center;
+            padding: 10px 0;
+            background: #fff;
+            border: 1px solid #a2a9b1;
+            border-top: none;
+        }
+
+        .infobox table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+        }
+
+        .infobox th, .infobox td {
+            padding: 4px;
+            vertical-align: top;
+            text-align: left;
+            border-bottom: 1px solid #eaecf0;
+        }
+
+        .infobox th {
+            width: 40%;
+            font-weight: bold;
+        }
+
+        /* Titres de sections h2 */
+        h2 {
+            font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+            font-size: 22px;
+            font-weight: normal;
+            border-bottom: 1px solid #a2a9b1;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        /* Notes de bas de page */
+        .reference {
+            font-size: 10px;
+            vertical-align: super;
+            font-weight: bold;
+            padding-left: 1px;
+        }
+
+        /* Menu des Sommaires */
+        .toc {
+            background-color: #f8f9fa;
+            border: 1px solid #a2a9b1;
+            padding: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .toc-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 15px;
+        }
+
+        .toc ul li {
+            margin: 3px 0;
+        }
+
+        .toc-number {
+            color: #202122;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="global-container">
+
+    <nav id="mw-navigation">
+        <a href="#" class="logo">WIKIPÉDIA</a>
+        <div class="nav-title">Navigation</div>
+        <ul>
+            <li><a href="#">Accueil</a></li>
+            <li><a href="#">Portails thématiques</a></li>
+            <li><a href="#">Article au hasard</a></li>
+        </ul>
+        <div class="nav-title">Contribuer</div>
+        <ul>
+            <li><a href="#">Débuter</a></li>
+            <li><a href="#">Aide</a></li>
+            <li><a href="#">Modifications récentes</a></li>
+        </ul>
+    </nav>
+
+    <main id="content">
+        <h1 class="firstHeading">Blåhaj</h1>
+        <div class="siteSub">Un article de Wikipédia, l'encyclopédie libre.</div>
+
+        <aside class="infobox">
+            <div class="infobox-title">Blåhaj (Requinesca Softis)</div>
+            <div class="infobox-image-box">
+                <span style="font-size: 80px; display:block; line-height:1;">🦈</span>
+                <div style="font-size:11px; color:#54595d; padding: 5px 0 0 0;">Spécimen standard en milieu calme.</div>
+            </div>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <td>Peluche de soutien émotionnel</td>
+                </tr>
+                <tr>
+                    <th>Longueur</th>
+                    <td>100 cm (ou version 55 cm)</td>
+                </tr>
+                <tr>
+                    <th>Taxonomie</th>
+                    <td><i>Famille des Squales Câlins</i></td>
+                </tr>
+                <tr>
+                    <th>Statut de conservation</th>
+                    <td><b>Espèce protégée</b> (Validité absolue)</td>
+                </tr>
+            </table>
+        </aside>
+
+        <p>Le <b>Blåhaj</b> (prononcé [ˈbloːhaj], littéralement « requin bleu » en suédois) est un squale en tissu de cent centimètres produit et distribué à l'échelle mondiale. Initialement conçu comme un simple oreiller d'agrément, plusieurs études scientifiques majeures ont récemment démontré ses propriétés thérapeutiques exceptionnelles sur l'espèce humaine<span class="reference"><a href="#refs"></a></span>.</p>
+        
+        <p>Il est mondialement reconnu comme un emblème majeur au sein de la culture internet et s'est imposé comme une icône de protection et d'alliance auprès de la communauté transgenre.</p>
+
+        <div class="toc">
+            <div class="toc-title">Sommaire</div>
+            <ul>
+                <li><a href="#biologie"><span class="toc-number">1</span><span>Biologie et Rembourrage</span></a></li>
+                <li><a href="#science"><span class="toc-number">2</span><span>Preuves Scientifiques</span></a></li>
+                <li><a href="#refs"><span class="toc-number">3</span><span>Références</span></a></li>
+            </ul>
+        </div>
+
+        <h2 id="biologie">1. Biologie et Rembourrage</h2>
+        <p>Le Blåhaj se distingue par une absence totale de squelette rigide, ce qui lui confère un facteur de compressibilité optimal pour les étreintes nocturnes. Sa robe extérieure est composée de fibres synthétiques teintées selon un spectre bleu clair, blanc et rose, rappelant subtilement les teintes de la fierté transgenre.</p>
+
+        <h2 id="science">2. Preuves Scientifiques</h2>
+        <p>Contrairement aux idées reçues, les effets bénéfiques du Blåhaj ne relèvent pas de l'effet placebo. Des protocoles d'analyse clinique menés en laboratoires indépendants<span class="reference"><a href="#refs"></a></span> indiquent une baisse drastique du taux de cortisol (l'hormone du stress) dès les dix premières secondes de contact physique avec le museau de la peluche.</p>
+        <p>Le rapport note également : <i>« Le sujet affiche une propension immédiate à se sentir en sécurité, indépendamment des pressions sociétales extérieures. Le Blåhaj neutralise efficacement les résidus d'anxiété moderne. »</i></p>
+
+        <h2 id="refs">3. Références</h2>
+        <ol style="margin-left: 20px; font-size: 12px; color: #54595d;">
+            <li id="ref1">↑ Revue Internationale de Câlinologie Appliquée, 2024, p. 42-45.</li>
+            <li id="ref2">↑ Rapport Universitaire d'Internetologie, <i>"Analyse empirique des peluches suédoises face à la dysphorie et au stress"</i>, 2025.</li>
+        </ol>
+    </main>
+
+</div>
+
+</body>
+</html>
