@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>LA MEILLEUR TIRLIST DE TOUT LUNIVER !!</title>
+    <style>
+        /* Un design volontairement d'un goût douteux avec la fameuse police Comic Sans */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #ff00ff;
+            text-shadow: 3px 3px #00ffff;
+            font-size: 2.5em;
+        }
+
+        .description {
+            color: #ccff00;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        /* Structure de la tierlist */
+        .tier-table {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #333;
+            padding: 15px;
+            border: 5px double #ff00ff;
+        }
+
+        .tier-row {
+            display: flex;
+            background-color: #222;
+            min-height: 100px;
+            border: 1px solid #444;
+        }
+
+        /* Les labels avec les couleurs officielles des tierlists */
+        .tier-label {
+            width: 120px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 28px;
+            color: #000;
+            text-shadow: 1px 1px #fff;
+            user-select: none;
+        }
+
+        .s-tier { background-color: #ff7f7f; }
+        .a-tier { background-color: #ffbf7f; }
+        .b-tier { background-color: #ffdf7f; }
+        .c-tier { background-color: #ffff7f; }
+        .d-tier { background-color: #7fff7f; }
+
+        /* Zone de dépôt des images */
+        .tier-dropzone {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            flex-grow: 1;
+            min-height: 80px;
+            background-color: #1c1c1c;
+        }
+
+        /* Conteneur d'image STRICTEMENT CARRÉ et de même taille */
+        .item {
+            width: 90px;
+            height: 90px;
+            position: relative;
+            cursor: grab;
+            border: 2px solid #fff;
+            box-sizing: border-box;
+            background-color: #000;
+        }
+
+        .item:active {
+            cursor: grabbing;
+        }
+
+        /* Image carrée parfaite */
+        .item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Coupe l'image pour qu'elle reste carrée sans déformer */
+            display: block;
+        }
+
+        /* Petit texte explicatif sur l'image */
+        .item .caption {
+            position: absolute;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            width: 100%;
+            font-size: 10px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* La zone du bas pour stocker les trucs à classer */
+        #item-bank {
+            margin: 40px auto;
+            max-width: 900px;
+            border: 3px dashed #00ffff;
+            padding: 20px;
+            background-color: #2b2b2b;
+            min-height: 120px;
+        }
+
+        h2 {
+            color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>BIENVENU SUR LE MEILLEUR TIRLISTE DE TOUT LUNIVER</h1>
+    <p class="description">ici on ranje tou et nimporte koi de la vi mdr. tu peu glisé déposé les caré ac la souri !</p>
+
+    <div class="tier-table">
+        <div class="tier-row">
+            <div class="tier-label s-tier">S</div>
+            <div class="tier-dropzone" id="zone-s"></div>
+        </div>
+        <div class="tier-row">
+            <div class="tier-label a-tier">A</div>
+            <div class="tier-dropzone" id="zone-a"></div>
+        </div>
+        <div class="tier-row">
+            <div class="tier-label b-tier">B</div>
+            <div class="tier-dropzone" id="zone-b"></div>
+        </div>
+        <div class="tier-row">
+            <div class="tier-label c-tier">C</div>
+            <div class="tier-dropzone" id="zone-c"></div>
+        </div>
+        <div class="tier-row">
+            <div class="tier-label d-tier">D</div>
+            <div class="tier-dropzone" id="zone-d"></div>
+        </div>
+    </div>
+
+    <h2>LES TRUC A CLASSER (OU PA)</h2>
+    <div id="item-bank" class="tier-dropzone"></div>
+
+    <script>
+        // Les données avec les fautes demandées et les positions par défaut
+        const itemsData = [
+            { 
+                id: 'lavoisier', 
+                name: 'Antouane Lavoisie', 
+                img: 'https://upload.wikimedia.org/wikipedia/commons/8/85/David_-_Portrait_of_Monsieur_Lavoisier_%28cropped%29.jpg', 
+                startZone: 'zone-s' 
+            },
+            { 
+                id: 'pomme', 
+                name: 'Pome Ruje', 
+                img: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=150&auto=format&fit=crop', 
+                startZone: 'zone-b' 
+            },
+            { 
+                id: 'bombe', 
+                name: 'La bonbe nucclére', 
+                img: 'https://static.vecteezy.com/ti/vecteur-libre/p1/38939663-gros-nucleaire-bombe-icone-dessin-anime-vecteur-combat-espace-vectoriel.jpg', 
+                startZone: 'zone-d' 
+            },
+            { 
+                id: 'Hitler', 
+                name: 'Adolph Hutler', 
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3syC56YO-STQCbCWOZ5F9QnDjNyUwIhYZYg&s', 
+                startZone: 'zone-d' 
+            },
+            { 
+                id: 'pizza', 
+                name: 'Piza anana', 
+                img: 'https://cache.marieclaire.fr/data/photo/w1000_c17/cuisine/4l/pizza-hawaienne-ananas-jambon.jpg', 
+                startZone: 'item-bank' 
+            },
+            { 
+                id: 'kebab', 
+                name: 'Le Maître Kebab', 
+                img: 'https://pbs.twimg.com/profile_images/580786451958390784/r_idrJu2_400x400.jpg', 
+                startZone: 'item-bank' 
+            }
+        ];
+
+        const bank = document.getElementById('item-bank');
+
+        // Génération automatique des éléments
+        itemsData.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.draggable = true;
+            div.id = item.id;
+            
+            div.innerHTML = `
+                <img src="${item.img}" alt="${item.name}">
+                <div class="caption">${item.name}</div>
+            `;
+
+            // Événement début du Drag
+            div.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', div.id);
+            });
+
+            // Placement initial demandé
+            const targetZone = document.getElementById(item.startZone);
+            if (targetZone) {
+                targetZone.appendChild(div);
+            } else {
+                bank.appendChild(div);
+            }
+        });
+
+        // Gestion du Drag and Drop sur toutes les zones
+        const zones = document.querySelectorAll('.tier-dropzone');
+        zones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                // Obligatoire pour autoriser le dépôt
+                e.preventDefault();
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const id = e.dataTransfer.getData('text/plain');
+                const draggedElement = document.getElementById(id);
+                
+                if (draggedElement) {
+                    // On s'assure d'ajouter à la zone et pas SUR une autre image
+                    if (e.target.classList.contains('tier-dropzone')) {
+                        e.target.appendChild(draggedElement);
+                    } else {
+                        e.target.closest('.tier-dropzone').appendChild(draggedElement);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
