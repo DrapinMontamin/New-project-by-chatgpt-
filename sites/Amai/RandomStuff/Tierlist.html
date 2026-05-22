@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>LA MEILLEUR TIRLIST DE TOUT LUNIVER !!</title>
+    <style>
+        /* Un design volontairement d'un goût douteux avec la fameuse police Comic Sans */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #ff00ff;
+            text-shadow: 3px 3px #00ffff;
+            font-size: 2.5em;
+        }
+
+        .description {
+            color: #ccff00;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        /* Structure de la tierlist */
+        .tier-table {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #333;
+            padding: 15px;
+            border: 5px double #ff00ff;
+        }
+
+        .tier-row {
+            display: flex;
+            background-color: #222;
+            min-height: 100px;
+            border: 1px solid #444;
+        }
+
+        /* Les labels avec les couleurs officielles des tierlists */
+        .tier-label {
+            width: 120px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 28px;
+            color: #000;
+            text-shadow: 1px 1px #fff;
+            user-select: none;
+        }
+
+        .s-tier { background-color: #ff7f7f; }
+        .a-tier { background-color: #ffbf7f; }
+        .b-tier { background-color: #ffdf7f; }
+        .c-tier { background-color: #ffff7f; }
+        .d-tier { background-color: #7fff7f; }
+
+        /* Zone de dépôt des images */
+        .tier-dropzone {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            flex-grow: 1;
+            min-height: 80px;
+            background-color: #1c1c1c;
+        }
+
+        /* Conteneur d'image STRICTEMENT CARRÉ et de même taille */
+        .item {
+            width: 90px;
+            height: 90px;
+            position: relative;
+            cursor: grab;
+            border: 2px solid #fff;
+            box-sizing: border-box;
+            background-color: #000;
+        }
+
+        .item:active {
+            cursor: grabbing;
+        }
+
+        /* Image carrée parfaite */
+        .item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Coupe l'image pour qu'elle reste carrée sans déformer */
+            display: block;
+        }
+
+        /* Petit texte explicatif sur l'image */
+        .item .caption {
+            position: absolute;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            width: 100%;
+            font-size: 10px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* La zone du bas pour stocker les trucs à classer */
+        #item-bank {
+            margin: 40px auto;
+            max-width: 900px;
+            border: 3px dashed #00ffff;
+            padding: 20px;
+            background-color: #2b2b2b;
+            min-height: 120px;
+        }
+
+        h2 {
+            color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>BIENVENU SUR LE MEILLEUR TIRLISTE DE TOUT LUNIVER</h1>
+    <p class="description">ici on ranje tou et nimporte koi de la vi mdr. tu peu glisé déposé les caré ac la souri !</p>
+
+    <div class="tier-table">
+        <div class="tier-row">
+            <div class="tier-label s-tier">S</div>
+            <div class="tier-dropzone" id="zone-s"></div>
+        </div>
+        <div class="tier-row">
+            <div class="tier-label a-tier">A</div>
+            <div class="tier-dropzone" id="zone-a"></div>
+        </div>
+        <div class="tier-row">
+            <div class="tier-label b-tier">B</div>
+            <div class="tier-dropzone" id="zone-b"></div>
+        </div>
+        <div class="tier-row">
+            <div class="tier-label c-tier">C</div>
+            <div class="tier-dropzone" id="zone-c"></div>
+        </div>
+        <div class="tier-row">
+            <div class="tier-label d-tier">D</div>
+            <div class="tier-dropzone" id="zone-d"></div>
+        </div>
+    </div>
+
+    <h2>LES TRUC A CLASSER (OU PA)</h2>
+    <div id="item-bank" class="tier-dropzone"></div>
+
+    <script>
+        // Les données avec les fautes demandées et les positions par défaut
+        const itemsData = [
+            {
+                id: 'newton', 
+                name: 'Isaac Newton',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/3/39/GodfreyKneller-IsaacNewton-1689.jpg',
+                startZone: 'zone-s'
+            },
+            {
+                id:"l",
+                name: "L",
+                img: "https://i.ebayimg.com/images/g/49kAAOSwiuVkv-gR/s-l400.png",
+                startZone: 'zone-s'
+            },
+            { 
+                id: 'lavoisier', 
+                name: 'Antoine Lavoisier', 
+                img: 'https://upload.wikimedia.org/wikipedia/commons/8/85/David_-_Portrait_of_Monsieur_Lavoisier_%28cropped%29.jpg', 
+                startZone: 'zone-s' 
+            },
+            {
+                id: 'circuit_imprime',
+                name: 'Un circuit imprimé',
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR46WCJtDcL9kaIvwwmG7ebMXjz6avB8lu4zg&s',
+                startZone: 'zone-s'
+            },
+            {
+                id: 'einstein',
+                name: 'Albert Einstein',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Albert_Einstein_sticks_his_tongue.jpg/250px-Albert_Einstein_sticks_his_tongue.jpg',
+                startZone: 'zone-s'
+            },
+            {
+                    id: 'maison',
+                    name: 'Une maison',
+                    img: 'https://cdn-icons-png.flaticon.com/512/6830/6830146.png',
+                    startZone: 'zone-s'
+            },
+            {
+                id: 'formule_vitesse',
+                name: 'v = d / t',
+                img: 'https://calculis.net/images/vitesse-moyenne.png',
+                startZone: 'zone-s'
+            },
+            {
+                id : 'totem_immortalite',
+                name : 'Totem d\'immortalité',
+                img : 'https://minecraft.wiki/images/Totem_of_Undying_JE2_BE2.png?d56eb',
+                startZone : 'zone-s'
+            },
+            {
+                id: 'adn',
+                name: 'Acide DésoxyriboNucléique',
+                img: 'https://img.freepik.com/vecteurs-premium/molecule-adn-spirale-icone-molecule-complexe-tordue_71609-8510.jpg?semt=ais_hybrid&w=740&q=80',
+                startZone: 'zone-s'
+            },
+            {
+                id: 'eau', 
+                name: 'H2O', 
+                img: 'https://media.istockphoto.com/id/2035384413/fr/vectoriel/ic%C3%B4ne-h2o-ic%C3%B4ne-de-leau-vecteur.jpg?s=612x612&w=0&k=20&c=e31PZYspge_PRmSaW-9ewRp3TGQBN9VvAJ64w0tz5L8=', 
+                startZone: 'zone-s'
+            },
+            {
+                id: 'oxygene', 
+                name: 'L\'oxygène', 
+                img: 'https://media.istockphoto.com/id/1283581310/fr/vectoriel/ic%C3%B4ne-vectorielle-doxyg%C3%A8ne.jpg?s=612x612&w=0&k=20&c=wVjFPIapNFvRlXPls9Kjur7vWTIkIOToiC0TqicLoyo=', 
+                startZone: 'zone-s'
+            },
+            {
+                id : 'extincteur',
+                name : 'Extincteur',
+                img : 'https://catalogue.groupedlm.fr/5448-large_default/extincteur-a-poudre-abc.jpg',
+                startZone : 'zone-s'
+            },
+            {
+                id : "nature",
+                name : "La nature",
+                img : "https://s3-eu-north-1.amazonaws.com/py3.visitsweden.com/original_images/20180730-gsta_reiland-sunrays_in_a_pine_forest-6901-2_CMSTemplate.jpg",
+                startZone : "zone-s"
+            },
+            {
+                id:"doliprane",
+                name:"Boîte de Doliprane",
+                img:"https://www.pharmacie-prado-mermoz.com/client/840002/media/files/Doliprane-200-mg-20490_101_1397668248.jpg",
+                startZone:"zone-s"
+            },
+            {
+                id: 'feu_de_camp',
+                name: 'Un feu de camp',
+                img: 'https://img.magnific.com/vecteurs-libre/feu-camp-brulant-buches-arbre-illustration_1308-179688.jpg?semt=ais_hybrid&w=740&q=80',
+                startZone: 'zone-s'
+            },
+            {
+                id: 'moine_tibetain',
+                name: 'Un moine tibétain',
+                img: 'https://t4.ftcdn.net/jpg/06/31/92/13/360_F_631921382_tRcNrS7tYsWzHw5q4yYi4o1xI6DLHZ4W.jpg',
+                startZone: 'zone-s'
+            },
+            {
+                id: 'soleil', 
+                name: 'Le Soleil',
+                img: 'https://planetarium-bretagne.bzh/wp-content/uploads/2023/04/soleil-etoile.jpg',
+                startZone: 'zone-s'
+            },
+            {
+                id: 'arbre', 
+                name: 'Un arbre', 
+                img: 'https://www.semeurdhistoires.fr/wp-content/uploads/2022/03/arbre-hetre.webp', 
+                startZone: 'zone-s'
+            },
+            {
+                id: 'drapeau_lgbt', 
+                name: 'Le Drapeau LGBT', 
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Gay_Pride_Flag.svg/3840px-Gay_Pride_Flag.svg.png', 
+                startZone: 'zone-s'
+            },
+            {
+                id: 'tueur_en_serie_tueur_en_derivation', 
+                name: 'Tueur en série tueur en dérivation', 
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9IcVX1UwIhRtl_biBCxGFDsVc1aeTRQMZ_A&s', 
+                startZone: 'zone-b'
+            },
+            {
+                id: 'i_show_speed',
+                name: 'I Show Speed',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/e/ea/IShowSpeed_at_Chinatown_%28Portrait%29_04.jpg',
+                startZone: 'zone-b'
+            },
+            {
+                id: 'flute',
+                name: 'La flûte',
+                img: 'https://www.bax-shop.fr/images/keuzehulp_blokfluit_01.jpg',
+                startZone: 'zone-b'
+            },
+            { 
+                id: 'pomme', 
+                name: 'Pomme rouge', 
+                img: 'https://contents.mediadecathlon.com/s1057542/k$f8f7d14e0cf9acef164e5b965b6cf197/1920x0/1871pt1943/3732xcr3886/default.jpeg?format=auto', 
+                startZone: 'zone-b' 
+            },
+            { 
+                id: 'Carottes', 
+                name: 'Carottes', 
+                img: 'https://www.gemuese.ch/media/3bup13mn/karotte_bund_010819.png?width=720&height=720&quality=80', 
+                startZone: 'zone-c' 
+            },
+            { 
+                id: 'relation_de_chasles', 
+                name: 'Relation de Chasles', 
+                img: 'https://signmaths.univ-tlse3.fr/wp-content/uploads/DOSSIER_IMPORT/lycee/ge%CC%81ome%CC%81trie/transformation/translation/vecteur/relationDeChasles/relationDeChasles_image-600x447.png', 
+                startZone: 'zone-c' 
+            },
+            {
+                id: 'ornithorynque', 
+                name: 'Un ornithorynque', 
+                img: 'https://upload.wikimedia.org/wikipedia/commons/3/32/Ornithorhynchus.jpg', 
+                startZone: 'zone-c'
+            },
+            {
+                id: 'alcool', 
+                name: 'De l\'alcool', 
+                img: 'https://produits.bienmanger.com/29177-0w470h470_Liqueur_Jagermeister.jpg', 
+                startZone: 'zone-c'
+            },
+            {
+                id: 'tibo_inshape',
+                name: 'Tibo Inshape',
+                img: 'https://focus.telerama.fr/2024/05/27/0/0/900/900/1200/0/60/0/48ba72f_1716822586810-channels4-profile.jpg',
+                startZone: 'zone-c'
+            },
+            { 
+                id: 'couteau', 
+                name: 'Couteau', 
+                img: 'https://www.boutiquezerodechet.com/1301/couteau-inox.jpg', 
+                startZone: 'zone-c' 
+            },
+            { 
+                id: 'y_equals_mx_plus_p', 
+                name: 'y = mx + p', 
+                img: 'https://i.ibb.co/8L8xw8P2/Text.png', 
+                startZone: 'zone-c' 
+            },
+            {
+                id: 'alarme_incendie', 
+                name: 'Alarme à incendie', 
+                img: 'https://www.eaton.com/content/dam/eaton/products/safety-security-emergency-communications/fire/nugelec/d%C3%A9clencheurs-manuels-s3000/eaton-detecteurs-automatiques-et-declencheurs-manuels-bges3000.jpg', 
+                startZone: 'zone-c'
+            },
+            { 
+                id: 'bombe', 
+                name: 'La bombe Nucléaire', 
+                img: 'https://static.vecteezy.com/ti/vecteur-libre/p1/38939663-gros-nucleaire-bombe-icone-dessin-anime-vecteur-combat-espace-vectoriel.jpg', 
+                startZone: 'zone-d' 
+            },
+            { 
+                id: 'Hitler', 
+                name: 'Adolf Hitler', 
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3syC56YO-STQCbCWOZ5F9QnDjNyUwIhYZYg&s', 
+                startZone: 'zone-d' 
+            },
+            { 
+                id: 'kebab', 
+                name: 'Le Maître Kebabier', 
+                img: 'https://pbs.twimg.com/profile_images/580786451958390784/r_idrJu2_400x400.jpg', 
+                startZone: 'item-bank' 
+            },
+            { 
+                id: 'pizza', 
+                name: 'Piza anana', 
+                img: 'https://cache.marieclaire.fr/data/photo/w1000_c17/cuisine/4l/pizza-hawaienne-ananas-jambon.jpg', 
+                startZone: 'item-bank' 
+            },
+            { 
+                id: 'lettre_b', 
+                name: 'la lettre B', 
+                img: 'https://www.novap.fr/media/catalog/product/cache/207e23213cf636ccdef205098cf3c8a3/c/a/caractere_autocollant-noir-b-web.jpg', 
+                startZone: 'zone-d' 
+            },
+            { 
+                id: 'trump', 
+                name: 'Donald Trump', 
+                img: 'https://www.lexpress.fr/resizer/v2/HFVBPIK7BZHIXJRPVK4OYAT2DI.jpg?auth=ee991253112c5e6f92fd9e59bae4c2ed8defc14b0d9d2ed45945217f8ad8fced&width=1200&height=630&quality=85&focal=994%2C594',
+                startZone: 'zone-d'
+            },
+            { 
+                id: 'pistache', 
+                name: 'Glace à la Pistache', 
+                img: 'https://cdn.prod.website-files.com/663390ac7fe75fb227805906/668cd31ca47768a8a2d3177b_pistache.jpg',
+                startZone: 'zone-d'
+            },
+            { 
+                id: 'noir', 
+                name: 'La couleur noire', 
+                img: 'https://www.glassfonster.fr/4619-large_default/verre-clair-laque-noir-mat-6mm.jpg',
+                startZone: 'zone-d'
+            },
+            {
+                id: 'pronote',
+                name: 'Pronote',
+                img: 'https://play-lh.googleusercontent.com/gtRuvj-ZlL_8zK444zRjK9x4kBpAWxBwsf4CIEFH74x5US4xptkvO-IxzSUy5YuXYGGQhdsGq2ni2LLyB_Cfsg',
+                startZone: 'zone-d'
+            },
+            {
+                id: 'lettre_d', 
+                name: 'La lettre D', 
+                img: 'https://www.novap.fr/media/catalog/product/cache/207e23213cf636ccdef205098cf3c8a3/c/a/caractere_autocollant-noir-d-web.jpg', 
+                startZone: 'zone-d'
+            },
+            {
+                id: 'commerce_triangulaire',
+                name: 'Commerce Triangulaire',
+                img: 'https://download.vikidia.org/fr/images/6/60/Commerce_triangulaire.png',
+                startZone: 'zone-d'
+            },
+            {
+                id: 'asterion', 
+                name: 'Astérion', 
+                img: 'https://www.influenceur.promo/wp-content/uploads/2024/03/asterion-788x788.jpg', 
+                startZone: 'zone-d'
+            }
+        ];
+
+        const bank = document.getElementById('item-bank');
+
+        // Génération automatique des éléments
+        itemsData.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.draggable = true;
+            div.id = item.id;
+            
+            div.innerHTML = `
+                <img src="${item.img}" alt="${item.name}">
+                <div class="caption">${item.name}</div>
+            `;
+
+            // Événement début du Drag
+            div.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', div.id);
+            });
+
+            // Placement initial demandé
+            const targetZone = document.getElementById(item.startZone);
+            if (targetZone) {
+                targetZone.appendChild(div);
+            } else {
+                bank.appendChild(div);
+            }
+        });
+
+        // Gestion du Drag and Drop sur toutes les zones
+        const zones = document.querySelectorAll('.tier-dropzone');
+        zones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                // Obligatoire pour autoriser le dépôt
+                e.preventDefault();
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const id = e.dataTransfer.getData('text/plain');
+                const draggedElement = document.getElementById(id);
+                
+                if (draggedElement) {
+                    // On s'assure d'ajouter à la zone et pas SUR une autre image
+                    if (e.target.classList.contains('tier-dropzone')) {
+                        e.target.appendChild(draggedElement);
+                    } else {
+                        e.target.closest('.tier-dropzone').appendChild(draggedElement);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
