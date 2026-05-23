@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Réseau des Ombres - Comte de Valombre</title>
+    <style>
+        /* BASE & THEME SOMBRE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cinzel', 'Georgia', serif;
+        }
+
+        body {
+            background-color: #050505;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Liens et boutons */
+        a, button {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* ANIMATION GLITCH & BRUME */
+        @keyframes pulseGlow {
+            0% { text-shadow: 0 0 5px rgba(138, 43, 226, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(138, 43, 226, 0.9), 0 0 30px rgba(0, 0, 0, 0.8); }
+            100% { text-shadow: 0 0 5px rgba(138, 43, 226, 0.5); }
+        }
+
+        /* 1. HERO SECTION */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle, #110a1c 0%, #050505 100%);
+            padding: 20px;
+        }
+
+        .biography-title {
+            font-size: 3rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: #ffffff;
+            animation: pulseGlow 4s infinite;
+            margin-bottom: 10px;
+            transition: color 0.1s;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 1.2rem;
+        }
+
+        .cta-btn {
+            padding: 15px 30px;
+            background: transparent;
+            border: 1px solid #8a2be2;
+            color: #8a2be2;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 4px;
+        }
+
+        .cta-btn:hover {
+            background: #8a2be2;
+            color: #fff;
+            box-shadow: 0 0 15px #8a2be2;
+        }
+
+        /* EFFET DE SANG / MURMURE FLOTTANT */
+        .scary-overlay {
+            position: absolute;
+            bottom: 10%;
+            color: #4a0000;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 2s ease;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* 2. SECTION HISTOIRE (CARTES INTERACTIVES) */
+        .history-section {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            color: #fff;
+            border-bottom: 1px solid #222;
+            padding-bottom: 20px;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            padding: 40px 30px;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: #8a2be2;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            border-color: #333;
+            background: #121212;
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .card p {
+            color: #a0a0a0;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* 3. L'ALLIANCE ROYALE */
+        .alliance-section {
+            background: linear-gradient(180deg, #050505 0%, #0f0a15 100%);
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .alliance-content {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border: 1px solid #2a1b40;
+            border-radius: 4px;
+        }
+
+        /* 4. LE MODULE INTERACTIF */
+        .network-module {
+            padding: 100px 20px;
+            text-align: center;
+            background: #020202;
+        }
+
+        .input-box {
+            background: #111;
+            border: 1px solid #333;
+            padding: 15px;
+            color: #fff;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px 0;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .input-box:focus {
+            outline: none;
+            border-color: #8a2be2;
+        }
+
+        /* EFFET SCREAMER / SUBMERSION */
+        .blackout {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .cat-eyes {
+            width: 100px;
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .eye {
+            width: 35px;
+            height: 15px;
+            background: #00ff66;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #00ff66;
+            position: relative;
+        }
+
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 15px;
+            background: #000;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="blackoutScreen" class="blackout">
+        <div class="cat-eyes">
+            <div class="eye"></div>
+            <div class="eye"></div>
+        </div>
+        <p style="color: #00ff66; font-family: monospace; letter-spacing: 2px; text-align: center; padding: 0 20px;" id="blackoutText"></p>
+    </div>
+
+    <header>
+        <h1 id="identityTitle" class="biography-title">Comte de Valombre</h1>
+        <p class="subtitle">"Le secret est la seule monnaie qui ne perd jamais sa valeur."</p>
+        <button class="cta-btn" onclick="scrollToSection('histoire')">Explorer le Dossier</button>
+        <div id="whisper" class="scary-overlay">Le village a brûlé... Ils ont tout dévoré...</div>
+    </header>
+
+    <section id="histoire" class="history-section">
+        <h2 class="section-title">Les Chroniques Interdites</h2>
+        <div class="cards-container">
+            
+            <div class="card">
+                <h3>I. Le Sang Mêlé</h3>
+                <p>Né de l'union interdite entre deux mondes. Son enfance paisible s'est éteinte dans les cendres de son village, décimé sans raison par une horde d'orcs. Seul survivant, Quarion a appris la dureté d'un monde qui refuse les demi-elfes. À seulement 27 ans, encore enfant pour son sang, il maîtrisait déjà l'art d'exister sous mille visages.</p>
+            </div>
+
+            <div class="card">
+                <h3>II. L'Ombre du Chat</h3>
+                <p>La milice n'a rien compris. En quelques nuits, un empire criminel installé depuis des décennies s'est effondré. Quarion n'a pas éliminé ses rivaux : il les a brisés, volant la fortune des nobles corrompus en échange de leur souffle. Le Chat Noir est né, transformant chaque criminel en un pion sur son échiquier d'espions.</p>
+            </div>
+
+            <div class="card">
+                <h3>III. La Couronne de Valombre</h3>
+                <p>Devenu la deuxième plus grosse fortune de Terrahill juste derrière les Montamin, l'ancien paria s'est acheté une légitimité. Portant désormais le titre de Comte de Valombre, il arpente les couloirs de la cour royale. Justicier secret pour le peuple, menace invisible pour les puissants.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="alliance-section">
+        <div class="alliance-content">
+            <h2 style="color: #fff; margin-bottom: 20px;">L'Oiseau en Cage & Le Chat</h2>
+            <p style="color: #b5a6c9; line-height: 1.8;">
+                La princesse Liora étouffait derrière les remparts du château. Connaissant la réputation d'efficacité du Comte, le Roi lui confia la garde de sa fille pour un voyage à travers les mondes. Entre les dangers de la route et les secrets partagés, l'inattendu se produisit. Le paria et la princesse lièrent leurs destins, scellant leur union sous la bénédiction royale.
+            </p>
+        </div>
+    </section>
+
+    <section class="network-module">
+        <h2 style="color: #fff;">Rejoindre le Réseau de Valombre</h2>
+        <p style="color: #666; margin-top: 10px;">Le Comte vous observe. Quel est votre secret ?</p>
+        <input type="text" id="userSecret" class="input-box" placeholder="Écrivez quelque chose... si vous l'osez."><br>
+        <button class="cta-btn" onclick="triggerBlackout()">Sceller le Pacte</button>
+    </section>
+
+    <script>
+        // 1. Changement d'identité fluide au survol du titre
+        const title = document.getElementById('identityTitle');
+        const identities = ["Comte de Valombre", "Quarion Amanodel", "Le Chat Noir"];
+        let index = 0;
+
+        title.addEventListener('mouseenter', () => {
+            index = (index + 1) % identities.length;
+            title.style.color = '#ff0055';
+            title.innerText = identities[index];
+        });
+
+        title.addEventListener('mouseleave', () => {
+            title.style.color = '#ffffff';
+        });
+
+        // 2. Déclenchement du murmure effrayant après 4 secondes d'inactivité
+        setTimeout(() => {
+            document.getElementById('whisper').style.opacity = '1';
+        }, 4000);
+
+        // 3. Navigation fluide
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 4. L'effet de piratage / simulation finale
+        function triggerBlackout() {
+            const secret = document.getElementById('userSecret').value;
+            if(!secret) {
+                alert("L'ombre n'accepte pas les esprits vides. Écrivez un secret.");
+                return;
+            }
+
+            const blackout = document.getElementById('blackoutScreen');
+            const txt = document.getElementById('blackoutText');
+            
+            blackout.style.display = 'flex';
+            txt.innerText = "Analyse de votre secret en cours...";
+
+            setTimeout(() => {
+                txt.innerText = "Votre âme appartient désormais au réseau du Chat Noir. Merci pour votre contribution, " + secret.substring(0, 10) + "...";
+            }, 2500);
+
+            setTimeout(() => {
+                blackout.style.display = 'none';
+                document.getElementById('userSecret').value = '';
+            }, 6000);
+        }
+    </script>
+</body>
+</html>
