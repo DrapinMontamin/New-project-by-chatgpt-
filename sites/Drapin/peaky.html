@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peaky Blinders: Birmingham Empire</title>
+    <style>
+        /* AMBIANCE BRUMEUSE ET INDUSTRIELLE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%);
+            color: #d4c5b3;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* LAYOUT EN 3 COLONNES */
+        .column {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #332a21;
+        }
+
+        /* COLONNE GAUCHE : LE CLICKER */
+        #left-col {
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .score-display {
+            font-size: 2.5rem;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            margin-bottom: 5px;
+        }
+
+        .gps-display {
+            font-size: 1rem;
+            color: #8c7d70;
+            margin-bottom: 40px;
+        }
+
+        .cap-btn {
+            width: 200px;
+            height: 200px;
+            background: #2b251f;
+            border: 4px solid #4a3f35;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.05s, box-shadow 0.2s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .cap-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Effet visuel du bouton (la casquette des Peaky) */
+        .cap-btn::before {
+            content: 'PEAKY CAP';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* COLONNE CENTRALE : LES AMÉLIORATIONS (BUSINESS) */
+        #mid-col {
+            flex: 1.2;
+            overflow-y: auto;
+        }
+
+        /* COLONNE DROITE : LES ACTIONS & LOGS */
+        #right-col {
+            flex: 0.8;
+            border-right: none;
+            justify-content: space-between;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: #ffcc66;
+            border-bottom: 1px solid #332a21;
+            padding-bottom: 5px;
+        }
+
+        /* DESIGN DES ITEMS DE LA BOUTIQUE */
+        .item-card {
+            background: #141210;
+            border: 1px solid #2b251f;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .item-card:hover {
+            background: #1f1b17;
+        }
+
+        .item-info h3 {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .item-info p {
+            font-size: 0.85rem;
+            color: #8c7d70;
+        }
+
+        .buy-btn {
+            background: #4a3f35;
+            border: 1px solid #615245;
+            color: #fff;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .buy-btn:hover:not(:disabled) {
+            background: #ffcc66;
+            color: #000;
+        }
+
+        .buy-btn:disabled {
+            opacity: 0.3;
+            cursor:not-allowed;
+        }
+
+        /* EVENEMENTS ALEATOIRES & LOGS */
+        .log-box {
+            background: #000;
+            border: 1px solid #221c17;
+            padding: 10px;
+            height: 150px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            color: #a69585;
+            margin-top: 20px;
+        }
+
+        .event-banner {
+            background: #3a1111;
+            border: 1px solid #ff4444;
+            color: #fff;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: none;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .event-banner button {
+            background: #ff4444;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* CHIFFRES FLOTTANTS AU CLIC */
+        .floating-text {
+            position: absolute;
+            color: #ffcc66;
+            font-weight: bold;
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-100px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="column" id="left-col">
+        <p style="text-transform: uppercase; letter-spacing: 3px; font-size: 0.9rem;">Ordre des Peaky Blinders</p>
+        <div class="score-display" id="total-guineas">0</div>
+        <div style="color: #ffcc66; font-size: 0.9rem; margin-bottom: 20px;">Guinées</div>
+        <div class="gps-display" id="gps-display">Revenus : 0 g/s</div>
+        
+        <div class="cap-btn" id="click-btn"></div>
+    </div>
+
+    <div class="column" id="mid-col">
+        <h2>Contrôler Birmingham</h2>
+        <div id="market-container"></div>
+    </div>
+
+    <div class="column" id="right-col">
+        <div>
+            <h2>Gestion du Clan</h2>
+            
+            <div id="event-box" class="event-banner">
+                <p id="event-text">L'inspecteur Campbell fait une descente !</p>
+                <button onclick="resolveEvent()">Payer le pot-de-vin</button>
+            </div>
+
+            <div class="item-card">
+                <div class="item-info">
+                    <h3>Aiguiser les lames</h3>
+                    <p>Augmente la valeur de vos clics de +1</p>
+                </div>
+                <button class="buy-btn" id="upgrade-click-btn" onclick="buyClickUpgrade()">Coût: 50 g</button>
+            </div>
+        </div>
+
+        <div>
+            <h3>Rapports de Tommy Shelby</h3>
+            <div class="log-box" id="log-box">
+                <div>[Système] Bienvenue à Small Heath. Commencez à parier.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DONNÉES DU JEU
+        let guineas = 0;
+        let guineasPerSecond = 0;
+        let guineaPerClick = 1;
+        let clickUpgradeCost = 50;
+
+        const businessData = [
+            { id: 'beting', name: 'Paris Clandestins', cost: 15, gps: 0.1, count: 0, desc: 'Des paris de rue sur les courses de chevaux.' },
+            { id: 'pub', name: 'Le Garrison Pub', cost: 100, gps: 1, count: 0, desc: 'Le QG de la famille, parfait pour blanchir l\'argent.' },
+            { id: 'distillery', name: 'Distillerie Secrète', cost: 1100, gps: 8, count: 0, desc: 'Du gin pur pour l\'exportation vers l\'Amérique.' },
+            { id: 'shipping', name: 'Chantier Naval du Canal', cost: 12000, gps: 47, count: 0, desc: 'Contrôlez les cargaisons de marchandises sur l\'eau.' },
+            { id: 'london', name: 'Club de Londres', cost: 130000, gps: 260, count: 0, desc: 'Prenez le territoire d\'Alfie Solomons.' }
+        ];
+
+        // INITIALISATION
+        const totalDisplay = document.getElementById('total-guineas');
+        const gpsDisplay = document.getElementById('gps-display');
+        const marketContainer = document.getElementById('market-container');
+        const logBox = document.getElementById('log-box');
+        const clickBtn = document.getElementById('click-btn');
+
+        function initMarket() {
+            marketContainer.innerHTML = '';
+            businessData.forEach((biz, index) => {
+                marketContainer.innerHTML += `
+                    <div class="item-card">
+                        <div class="item-info">
+                            <h3>${biz.name} (${biz.count})</h3>
+                            <p>${biz.desc}</p>
+                            <p style="color: #ffcc66;">+${biz.gps} g/s</p>
+                        </div>
+                        <button class="buy-btn" id="btn-${biz.id}" onclick="buyBusiness(${index})">
+                            Coût: ${Math.floor(biz.cost)} g
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        // LOGIQUE DU REVENU PASSIF (BOUCLE DU JEU)
+        setInterval(() => {
+            guineas += guineasPerSecond / 10; // Divisé par 10 car exécuté toutes les 100ms
+            updateUI();
+        }, 100);
+
+        // EVENEMENTS ALEATOIRES (Toutes les 30 à 45 secondes)
+        let activeEvent = false;
+        let eventCost = 0;
+
+        function triggerRandomEvent() {
+            if (activeEvent || guineasPerSecond === 0) return;
+            
+            activeEvent = true;
+            eventCost = Math.floor(guineasPerSecond * 15) + 10;
+            
+            const eventBox = document.getElementById('event-box');
+            const eventText = document.getElementById('event-text');
+            
+            eventText.innerText = `L'Inspecteur Campbell menace vos affaires. Perte imminente ! Sabotage en cours.`;
+            eventBox.style.display = 'block';
+            addLog("⚠️ Campbell interfère avec nos opérations !");
+        }
+        setInterval(triggerRandomEvent, 25000);
+
+        function resolveEvent() {
+            if (guineas >= eventCost) {
+                guineas -= eventCost;
+                document.getElementById('event-box').style.display = 'none';
+                activeEvent = false;
+                addLog(`💼 Pot-de-vin de ${eventCost} guinées versé. Affaires sécurisées.`);
+            } else {
+                addLog("❌ Pas assez d'argent pour corrompre la police ! Les affaires ralentissent...");
+                // Pénalité temporaire
+                guineas = Math.max(0, guineas - eventCost);
+                document.getElementById('event-box').style.display = 'none';
+                activeEvent = false;
+            }
+        }
+
+        // ACTIONS DU JOUEUR
+        clickBtn.addEventListener('click', (e) => {
+            guineas += guineaPerClick;
+            createFloatingText(e, `+${guineaPerClick}`);
+            updateUI();
+        });
+
+        function buyBusiness(index) {
+            const biz = businessData[index];
+            if (guineas >= biz.cost) {
+                guineas -= biz.cost;
+                biz.count++;
+                biz.cost *= 1.15; // Augmentation du prix
+                calculateGPS();
+                initMarket();
+                addLog(`💼 Nouveau business acquis : ${biz.name}`);
+            }
+        }
+
+        function buyClickUpgrade() {
+            if (guineas >= clickUpgradeCost) {
+                guineas -= clickUpgradeCost;
+                guineaPerClick += 1;
+                clickUpgradeCost *= 2;
+                document.getElementById('upgrade-click-btn').innerText = `Coût: ${clickUpgradeCost} g`;
+                addLog(`🔪 Lames aiguisées ! Efficacité du clic augmentée.`);
+                updateUI();
+            }
+        }
+
+        // CALCULS ET MISES À JOUR
+        function calculateGPS() {
+            guineasPerSecond = businessData.reduce((total, biz) => total + (biz.count * biz.gps), 0);
+        }
+
+        function updateUI() {
+            totalDisplay.innerText = Math.floor(guineas);
+            gpsDisplay.innerText = `Revenus : ${guineasPerSecond.toFixed(1)} g/s`;
+
+            // Activer/Désactiver les boutons de la boutique selon l'or disponible
+            businessData.forEach(biz => {
+                const btn = document.getElementById(`btn-${biz.id}`);
+                if (btn) btn.disabled = guineas < biz.cost;
+            });
+
+            document.getElementById('upgrade-click-btn').disabled = guineas < clickUpgradeCost;
+        }
+
+        function addLog(message) {
+            const date = new Date();
+            const time = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+            logBox.innerHTML += `<div>[${time}] ${message}</div>`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function createFloatingText(e, text) {
+            const float = document.createElement('div');
+            float.className = 'floating-text';
+            float.innerText = text;
+            float.style.left = `${e.clientX - 10}px`;
+            float.style.top = `${e.clientY - 20}px`;
+            document.body.appendChild(float);
+            
+            setTimeout(() => float.remove(), 800);
+        }
+
+        // DÉMARRAGE
+        initMarket();
+    </script>
+</body>
+</html>
