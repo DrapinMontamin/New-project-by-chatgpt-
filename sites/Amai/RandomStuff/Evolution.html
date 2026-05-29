@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Métamorphose du Web - Expérience Infinie</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           VARIABLES FONDAMENTALES (Gérées dynamiquement par le JS au pixel près)
+           ========================================================================== */
+        :root {
+            --scroll-pct: 0;
+            
+            /* Design Système Évolutif */
+            --bg-page: #ffffff;
+            --text-main: #000000;
+            --text-muted: #555555;
+            --text-link: #0000ff;
+            --link-decoration: underline;
+            --border-color: #cbdae6;
+            --card-bg: #ffffff;
+            --accent-color: #ff0000;
+            
+            /* Structure Évolutive */
+            --base-font: 'MS Gothic', 'Arial', sans-serif;
+            --base-size: 11px;
+            --line-height: 1.2;
+            --letter-spacing: -0.3px;
+            --global-radius: 0px;
+            --global-padding: 5px;
+            --gap-size: 4px;
+            --shadow: 0 0px 0px rgba(0,0,0,0);
+            --container-width: 950px;
+        }
+
+        * {
+            box-sizing: border-box;
+            /* Pas de transition brute CSS pour laisser le JS interpoler de manière ultra-fluide */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: var(--base-font);
+            font-size: var(--base-size);
+            line-height: var(--line-height);
+            letter-spacing: var(--letter-spacing);
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--text-link);
+            text-decoration: var(--link-decoration);
+        }
+
+        /* Indicateur temporel fixe et discret */
+        .timeline-hud {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            padding: 8px 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            border-radius: 30px;
+            z-index: 9999;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 20px var(--global-padding);
+        }
+
+        /* Grille adaptative globale */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 180px 1fr 240px;
+            gap: var(--gap-size);
+        }
+
+        /* Évolution des blocs (Cards) */
+        .box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: var(--global-padding);
+            border-radius: var(--global-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: var(--gap-size);
+        }
+
+        /* Éléments typiques Yahoo Japan (Haut de page) */
+        .retro-header {
+            border-bottom: 2px solid #ff0000;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .retro-logo {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 32px;
+            color: #ff0000;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+        .retro-search {
+            background: #f0f0f0;
+            border: 1px solid #aaa;
+            padding: 8px;
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        .retro-search input {
+            flex: 1;
+            font-size: 12px;
+            padding: 3px;
+            border: 1px solid #777;
+        }
+        .retro-search button {
+            background: #e0e0e0;
+            border: 1px solid #666;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 2px 10px;
+        }
+
+        .category-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .category-list li {
+            padding: 3px 0;
+            border-bottom: 1px dotted var(--border-color);
+        }
+
+        .news-item {
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+        }
+
+        /* Éléments de structure intermédiaires cachés/affichés subtilement */
+        .separator-line {
+            height: 1px;
+            background: var(--border-color);
+            margin: 15px 0;
+        }
+
+        /* Mode Bento & futuriste injecté en fin de page */
+        .future-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--gap-size);
+        }
+        .bento-hero {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: var(--text-link);
+            color: var(--card-bg);
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: var(--global-radius);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="timeline-hud" id="hud">ANALYSE : STRUCTURE BRUTE DE 2000</div>
+
+    <div class="container">
+        
+        <header class="retro-header">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <span class="retro-logo">YAHOO! JAPAN</span>
+                <span style="color: var(--text-muted); font-size: 10px;">[Version d'archive simulée - Défilez vers le futur]</span>
+            </div>
+        </header>
+
+        <div class="retro-search">
+            <input type="text" value="Recherche par mots-clés...">
+            <button style="background: #ffcc00; border-color: #b88600;">検索 (Chercher)</button>
+        </div>
+
+        <main class="main-layout">
+            
+            <aside class="left-col">
+                <div class="box">
+                    <b style="color: #bf0000;">■ 主なサービス (Services)</b>
+                    <ul class="category-list">
+                        <li><a href="#">オークション (Enchères)</a></li>
+                        <li><a href="#">ショッピング (Shopping)</a></li>
+                        <li><a href="#">ヤフオク (Yahuoku!)</a></li>
+                        <li><a href="#">旅行 (Voyages)</a></li>
+                        <li><a href="#">ニュース (Actualités)</a></li>
+                        <li><a href="#">天気 (Météo)</a></li>
+                        <li><a href="#">スポーツ (Sports)</a></li>
+                        <li><a href="#">ファイナンス (Finance)</a></li>
+                        <li><a href="#">占い (Voyance)</a></li>
+                    </ul>
+                </div>
+
+                <div class="box">
+                    <b>■ コミュニティ (Communauté)</b>
+                    <ul class="category-list">
+                        <li><a href="#">メール (Yahoo! Mail)</a></li>
+                        <li><a href="#">掲示板 (Forums)</a></li>
+                        <li><a href="#">ブログ (Blogs Web1.0)</a></li>
+                        <li><a href="#">チャット (Chat en ligne)</a></li>
+                        <li><a href="#">アバター (Avatars 2D)</a></li>
+                    </ul>
+                </div>
+
+                <div class="box">
+                    <b>■ 専門情報 (Spécialités)</b>
+                    <ul class="category-list">
+                        <li><a href="#">求人 (Emploi)</a></li>
+                        <li><a href="#">不動産 (Immobilier)</a></li>
+                        <li><a href="#">自動車 (Auto)</a></li>
+                        <li><a href="#">コンピュータ (Tech)</a></li>
+                    </ul>
+                </div>
+
+                <div class="box" style="margin-top: 150px;">
+                    <span style="font-size: 10px; text-transform: uppercase; opacity: 0.5;">Axe d'évolution latérale</span>
+                    <p style="margin: 5px 0 0 0;">Les listes se transforment progressivement en modules indépendants...</p>
+                </div>
+
+                <div class="box" style="margin-top: 400px;">
+                    <h3>Navigation 2.0</h3>
+                    <p style="color: var(--text-muted);">L'accessibilité s'améliore, les bordures s'estompent doucement.</p>
+                </div>
+
+                <div class="box" style="margin-top: 600px; border: 1px solid var(--text-link);">
+                    <h4 style="margin:0;">Système d'onglets</h4>
+                    <p>Début de la centralisation des flux applicatifs.</p>
+                </div>
+            </aside>
+
+
+            <section class="center-col">
+                
+                <div class="box">
+                    <div style="background: #e9f0fa; padding: 4px; border-bottom: 1px solid var(--border-color); font-weight: bold;">
+                        トピックス (Actualités Principales)
+                    </div>
+                    <div style="padding: 5px;">
+                        <div class="news-item">・<a href="#">Nouveau protocole internet en cours d'expérimentation [12:30]</a></div>
+                        <div class="news-item">・<a href="#">Bourse de Tokyo : Clôture en légère baisse ce matin [11:15]</a></div>
+                        <div class="news-item">・<a href="#">Téléphonie : Le marché des forfaits mobiles explose [10:00]</a></div>
+                        <div class="news-item">・<a href="#">Météo : Anticyclone persistant sur l'archipel [09:45]</a></div>
+                        <div class="news-item">・<a href="#">Sport : Reprise des entraînements de la ligue nationale [Hier]</a></div>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 80px;">
+                    <b>経済ニュース (Économie & Marchés)</b>
+                    <p style="color: var(--text-muted); margin: 5px 0;">Les rapports trimestriels indiquent une stabilisation globale de la production industrielle. Les experts prévoient une augmentation des investissements dans les infrastructures réseau et de télécommunication pour l'année à venir.</p>
+                    <a href="#">Lire l'article complet (2 pages)</a>
+                </div>
+
+                <div class="box" style="margin-top: 150px;">
+                    <b>IT &テクノロジー (Technologies de l'information)</b>
+                    <p style="color: var(--text-muted); margin: 5px 0;">L'adoption des ordinateurs de bureau à écran plat révolutionne l'espace de travail en entreprise. Les débits de connexion domestique atteignent des seuils historiques ce mois-ci.</p>
+                    <a href="#">Consulter les graphiques comparatifs</a>
+                </div>
+
+                <div class="box" style="margin-top: 300px; padding: 15px;">
+                    <h2 style="margin-top: 0; font-size: 1.4em;">L'Ère des Flux Dynamiques</h2>
+                    <p>Vous êtes en train de franchir l'année 2010. Notez comment l'espacement global s'élargit de manière microscopique. Les textes ne sont plus collés aux bordures.</p>
+                    <div style="background: #f9f9f9; padding: 10px; border-left: 3px solid var(--text-link);">
+                        "Le contenu n'est plus statique, il commence à respirer."
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 400px;">
+                    <h3>Flux d'agrégation sociale</h3>
+                    <p style="color: var(--text-muted);">Les utilisateurs partagent désormais des données complexes en temps réel. Le web de annuaires laisse place au web applicatif.</p>
+                </div>
+
+                <div class="box" style="margin-top: 500px;">
+                    <span style="background: #ff0000; color: #fff; padding: 2px 5px; font-weight: bold;">LIVE</span>
+                    <h3 style="display:inline; margin-left:10px;">Révolution des Interfaces Mobiles</h3>
+                    <p style="margin-top:5px;">Les grilles fixes se brisent au profit du design adaptatif. Les polices de caractères se lissent pour s'adapter aux écrans à haute densité de pixels.</p>
+                </div>
+
+                <div class="box" style="margin-top: 600px; padding: 20px;">
+                    <span class="gradient-text" style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Épuration Globale</span>
+                    <h2 style="font-weight: 600; margin: 10px 0;">L'importance de l'espace négatif</h2>
+                    <p style="color: var(--text-muted); font-size: 1.1em;">Les lignes de séparation et les puces d'énumération disparaissent. L'œil n'est plus guidé par des tableaux rigides, mais par la hiérarchie typographique et le vide structurel.</p>
+                </div>
+
+                <div class="box" style="margin-top: 450px;">
+                    <h3 style="font-weight: 500;">Composants Flottants</h3>
+                    <p style="color: var(--text-muted);">L'interface s'allège. Les ombres portées font leur apparition, simulant une profondeur de champ sur l'écran.</p>
+                </div>
+
+                <div class="future-grid" style="margin-top: 700px;">
+                    <div class="box bento-hero" style="display: flex; flex-direction: column; justify-content: space-between; padding: 30px;">
+                        <div>
+                            <h1 class="gradient-text" style="font-size: 2.5em; margin: 0 0 10px 0; line-height: 1.1;">NEO PORTAL // AI</h1>
+                            <p style="font-size: 1.2em; opacity: 0.8;">L'interface s'est totalement synchronisée à votre regard.</p>
+                        </div>
+                        <button class="btn-action">INITIALISER LA SINGULARITÉ</button>
+                    </div>
+
+                    <div class="box" style="text-align: center; padding: 20px;">
+                        <div class="gradient-text" style="font-size: 2em; font-weight: 900;">0.0s</div>
+                        <p style="font-size: 10px; text-transform: uppercase; opacity: 0.6; margin: 5px 0 0 0;">Latence Cognitive</p>
+                    </div>
+
+                    <div class="box" style="padding: 15px;">
+                        <h4 style="margin:0 0 5px 0;">Réseau Décentralisé</h4>
+                        <div style="height: 4px; background: #00c6ff; width: 80%; border-radius: 2px;"></div>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 400px; margin-bottom: 200px; text-align: center; border: none; background: transparent;">
+                    <h2 class="gradient-text" style="font-size: 3em; margin: 0;">FIN DE L'ÉVOLUTION</h2>
+                    <p style="opacity: 0.5;">Vous avez traversé 26 ans de design web en un seul scroll.</p>
+                </div>
+
+            </section>
+
+
+            <aside class="right-col">
+                <div class="box" style="background: #fffdec; border-color: #e6db55;">
+                    <b style="color: #555;">PR 広告 (Sponsorisé)</b>
+                    <p style="margin: 5px 0;"><b>Découvrez le nouveau modem 56k !</b> Speed Internet haut débit chez vous sans abonnement téléphonique requis.</p>
+                    <a href="#" style="font-size: 10px; color: #555;">www.telecom-retro.jp</a>
+                </div>
+
+                <div class="box">
+                    <b>株価情報 (Bourse locale)</b>
+                    <table width="100%" style="font-size: 11px; border-collapse: collapse; margin-top: 5px;">
+                        <tr style="background:#eee;"><td>日経平均</td><td color="red">13,420.55</td></tr>
+                        <tr><td>TOPIX</td><td>1,284.10</td></tr>
+                    </table>
+                </div>
+
+                <div class="box" style="margin-top: 250px;">
+                    <b>Bannière Web 2.0</b>
+                    <div style="background: linear-gradient(to bottom, #4a90e2, #2c3e50); color: #fff; padding: 15px; text-align: center; margin-top: 5px;">
+                        Espace Publicitaire Ciblé Algorithmiquement
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 600px;">
+                    <h4 style="margin:0 0 10px 0;">Widget IoT Sync</h4>
+                    <p style="font-size: 11px; color: var(--text-muted);">Objets connectés synchronisés en arrière-plan de l'écosystème applicatif.</p>
+                </div>
+
+                <div class="box" style="margin-top: 850px; background: linear-gradient(135deg, rgba(0,198,255,0.1), rgba(0,114,255,0.1));">
+                    <h4 style="margin:0 0 5px 0;">Données Ambiantes</h4>
+                    <p style="margin:0; opacity:0.7;">Analyse prédictive comportementale active.</p>
+                </div>
+            </aside>
+
+        </main>
+    </div>
+
+    <script>
+        // Fonction d'interpolation linéaire (Lerp) pour lisser mathématiquement les valeurs
+        function lerp(start, end, amt) {
+            return start + (end - start) * amt;
+        }
+
+        // Interpolation de couleurs RGB simples
+        function lerpColor(r1, g1, b1, r2, g2, b2, amt) {
+            const r = Math.round(lerp(r1, r2, amt));
+            const g = Math.round(lerp(g1, g2, amt));
+            const b = Math.round(lerp(b1, b2, amt));
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        window.addEventListener('scroll', () => {
+            // Calcul ultra-précis du pourcentage de défilement (0.0000 à 1.0000)
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = Math.min(Math.max(scrollTop / docHeight, 0), 1);
+            
+            const root = document.documentElement;
+            const hud = document.getElementById('hud');
+
+            // 1. DYNAMIQUE DE LA COULEUR DE FOND (Blanc -> Gris Clair -> Blanc -> Noir Profond)
+            let bg, text, cardBg, border, link, shadow, linkDeco;
+            
+            if (pct < 0.4) {
+                // Phase 1 : Transition douce de Web 1.0 (pur blanc) vers Web 2.0 (Gris-bleu propre)
+                const localPct = pct / 0.4;
+                bg = lerpColor(255, 255, 255, 244, 246, 249, localPct);
+                text = lerpColor(0, 0, 0, 44, 62, 80, localPct);
+                cardBg = lerpColor(255, 255, 255, 255, 255, 255, localPct);
+                border = lerpColor(203, 218, 230, 189, 195, 199, localPct);
+                link = lerpColor(0, 0, 255, 30, 112, 191, localPct);
+                shadow = `0 ${lerp(0, 2, localPct)}px ${lerp(0, 6, localPct)}px rgba(0,0,0,0.03)`;
+                linkDeco = "underline";
+                hud.innerText = `ANALYSE : MATURATION WEB 1.5 - FUSION DES LIENS (${Math.round(pct*100)}%)`;
+            } 
+            else if (pct >= 0.4 && pct < 0.75) {
+                // Phase 2 : Du Web 2.0 vers le Minimalisme Moderne Flat (Blanc cassé, ombres subtiles, texte aéré)
+                const localPct = (pct - 0.4) / 0.35;
+                bg = lerpColor(244, 246, 249, 250, 250, 250, localPct);
+                text = lerpColor(44, 62, 80, 17, 17, 17, localPct);
+                cardBg = lerpColor(255, 255, 255, 255, 255, 255, localPct);
+                border = lerpColor(189, 195, 199, 225, 225, 225, localPct);
+                link = lerpColor(30, 112, 191, 0, 102, 204, localPct);
+                shadow = `0 ${lerp(2, 15, localPct)}px ${lerp(6, 35, localPct)}px rgba(0,0,0,0.05)`;
+                linkDeco = "none";
+                hud.innerText = `ANALYSE : MINIMALISME ET ESPACE NÉGATIF (${Math.round(pct*100)}%)`;
+            } 
+            else {
+                // Phase 3 : Métamorphose finale vers le Néo-Futur spatial (Noir, Verre/Glassmorphism, Néon Cyan)
+                const localPct = (pct - 0.75) / 0.25;
+                bg = lerpColor(250, 250, 250, 8, 9, 12, localPct);
+                text = lerpColor(17, 17, 17, 255, 255, 255, localPct);
+                cardBg = lerpColor(255, 255, 255, 18, 20, 26, localPct); // Devient sombre
+                border = lerpColor(225, 225, 225, 35, 40, 50, localPct);
+                link = lerpColor(0, 102, 204, 0, 243, 255, localPct); // Cyan néon
+                shadow = `0 20px 50px rgba(0, 198, 255, ${lerp(0, 0.15, localPct)})`;
+                linkDeco = "none";
+                hud.innerText = `ANALYSE : INTERFACE QUANTIQUE PORTAL // OS (${Math.round(pct*100)}%)`;
+            }
+
+            // Injection continue des styles de couleurs
+            root.style.setProperty('--bg-page', bg);
+            root.style.setProperty('--text-main', text);
+            root.style.setProperty('--card-bg', cardBg);
+            root.style.setProperty('--border-color', border);
+            root.style.setProperty('--text-link', link);
+            root.style.setProperty('--shadow', shadow);
+            root.style.setProperty('--link-decoration', linkDeco);
+
+            // 2. GRADATION STRUCTURELLE CRUCIALE (Calculée sur la totalité du scroll)
+            
+            // Arrondis : de 0px (brut) à 24px (bento moderne)
+            root.style.setProperty('--global-radius', `${lerp(0, 24, pct)}px`);
+            
+            // Espacement des grilles (Gaps) : de 4px à 28px
+            root.style.setProperty('--gap-size', `${lerp(4, 28, pct)}px`);
+            
+            // Marges internes des blocs (Paddings) : de 5px à 24px
+            root.style.setProperty('--global-padding', `${lerp(5, 24, pct)}px`);
+            
+            // Élargissement du container principal : de 950px (étroit d'époque) à 1250px
+            root.style.setProperty('--container-width', `${lerp(950, 1250, pct)}px`);
+
+            // 3. GRADATION TYPOGRAPHIQUE
+            // Taille de police de base : de 11px (micro-liens de portail) à 15px (lisibilité moderne)
+            root.style.setProperty('--base-size', `${lerp(11, 15, pct)}px`);
+            
+            // Hauteur de ligne : de 1.2 à 1.55
+            root.style.setProperty('--line-height', `${lerp(1.2, 1.55, pct)}`);
+            
+            // Espacement des lettres : de serré (-0.3px) à aéré (+0.3px)
+            root.style.setProperty('--letter-spacing', `${lerp(-0.3, 0.3, pct)}px`);
+
+            // Changement progressif de la police (Bascule douce vers la police variable Inter à la moitié du scroll)
+            if (pct > 0.45) {
+                root.style.setProperty('--base-font', "'Inter', sans-serif");
+            } else {
+                root.style.setProperty('--base-font', "'MS Gothic', 'Arial', sans-serif");
+            }
+        });
+    </script>
+</body>
+</html>
