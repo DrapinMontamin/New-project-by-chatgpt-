@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentions légales — New Project</title>
+    <meta name="description" content="Mentions légales du site : éditeur, hébergeur, propriété intellectuelle et données personnelles.">
+    <meta name="robots" content="noindex, follow">
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff00ea;
+            --neon-yellow: #fff600;
+            --dark-bg: #050505;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Consolas', 'Courier New', monospace;
+            overflow-x: hidden;
+            line-height: 1.85;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.3));
+            background-size: 100% 6px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        header {
+            position: relative;
+            padding: 70px 20px 35px;
+            text-align: center;
+            border-bottom: 2px solid var(--neon-pink);
+            background-image:
+                linear-gradient(rgba(0, 243, 255, 0.08) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 0, 234, 0.08) 2px, transparent 2px);
+            background-size: 40px 40px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: clamp(1.6rem, 6vw, 2.8rem);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 8px var(--neon-cyan), 3px 3px 0 var(--neon-pink);
+        }
+
+        header p {
+            margin: 14px 0 0;
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--neon-yellow);
+        }
+
+        main {
+            position: relative;
+            z-index: 2;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 45px 24px 90px;
+        }
+
+        h2 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--neon-yellow);
+            margin: 42px 0 12px;
+            padding-left: 14px;
+            border-left: 4px solid var(--neon-pink);
+        }
+
+        p, li { font-size: 0.9rem; color: #d0d0d0; }
+        p + p { margin-top: 14px; }
+        ul { padding-left: 22px; margin-top: 10px; }
+        li { margin-bottom: 8px; }
+
+        a { color: var(--neon-cyan); text-decoration: none; border-bottom: 1px dotted rgba(0, 243, 255, 0.5); }
+        a:hover { color: var(--neon-pink); border-bottom-color: var(--neon-pink); }
+
+        .card {
+            background: rgba(10, 10, 20, 0.85);
+            border: 1px solid rgba(0, 243, 255, 0.35);
+            box-shadow: 0 0 14px rgba(0, 243, 255, 0.08) inset;
+            padding: 20px 24px;
+            margin: 18px 0;
+        }
+
+        .card strong { color: #ffffff; }
+
+        .updated {
+            margin-top: 55px;
+            font-size: 0.72rem;
+            color: #6c6c6c;
+            text-align: right;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 35px;
+            padding: 11px 20px;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+        }
+        .back:hover { background: var(--neon-cyan); color: var(--dark-bg); }
+    </style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+
+<header>
+    <h1>Mentions légales</h1>
+    <p>New Project — site personnel</p>
+</header>
+
+<main>
+
+    <p>Conformément à l'article 6 III de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN), voici les informations relatives à l'éditeur et à l'hébergeur de ce site.</p>
+
+    <h2>1. Éditeur du site</h2>
+    <div class="card">
+        <p>
+            <strong>Éditeur / Directeur de la publication :</strong> AmaiSharkyuu (pseudonyme)<br>
+            <strong>Statut :</strong> personne physique éditant un site à titre non professionnel et non lucratif<br>
+            <strong>Contact :</strong> <a href="mailto:Contact@amaicraft.fr">Contact@amaicraft.fr</a>
+        </p>
+        <p style="font-size: 0.78rem; color: #9a9a9a;">En application de l'article 6 III 2 de la LCEN, l'éditeur non professionnel a choisi de rester anonyme auprès du public. Ses coordonnées complètes sont détenues par l'hébergeur et sont communicables sur réquisition de l'autorité judiciaire.</p>
+    </div>
+
+    <h2>2. Hébergeur</h2>
+    <div class="card">
+        <p>
+            <strong>GitHub Pages</strong> — GitHub, Inc.<br>
+            88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis<br>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">github.com</a> —
+            <a href="https://support.github.com" target="_blank" rel="noopener noreferrer">support.github.com</a>
+        </p>
+    </div>
+
+    <h2>3. Nature du site</h2>
+    <p>Ce site regroupe des pages expérimentales, humoristiques et des mini-jeux, réalisés à titre personnel et non lucratif, en partie à l'aide d'outils d'intelligence artificielle générative. Les contenus sont publiés à des fins de divertissement et d'expérimentation ; ils <strong>ne constituent ni une information vérifiée, ni un conseil d'aucune sorte</strong>.</p>
+    <p>Les pages peuvent contenir des textes ou visuels générés automatiquement, susceptibles de comporter des erreurs ou des incohérences.</p>
+
+    <h2>4. Marques et contenus de tiers</h2>
+    <p>Les jeux, œuvres, marques et personnages éventuellement cités ou parodiés sur ce site restent la propriété de leurs titulaires respectifs. Ce site n'est <strong>ni affilié, ni approuvé, ni sponsorisé</strong> par ceux-ci, et n'en tire aucun revenu.</p>
+    <p>Toute demande de retrait émanant d'un ayant droit sera traitée dans les meilleurs délais à l'adresse de contact ci-dessus.</p>
+
+    <h2>5. Propriété intellectuelle</h2>
+    <p>Hors éléments appartenant à des tiers, les textes originaux, la mise en page et le code source de ce site sont la propriété de l'éditeur. Toute reproduction ou réutilisation, totale ou partielle, sans autorisation préalable est interdite.</p>
+
+    <h2>6. Données personnelles et cookies</h2>
+    <p>Ce site est entièrement statique : aucun formulaire, aucun compte utilisateur, <strong>aucun outil de mesure d'audience</strong> et <strong>aucun cookie</strong>. Aucune donnée personnelle n'est collectée directement par l'éditeur. Les éventuelles données de progression des mini-jeux restent stockées localement dans votre navigateur et ne sont jamais transmises.</p>
+    <p>Pour des raisons techniques et de sécurité, GitHub peut enregistrer des données de connexion (adresse IP, date, page consultée) lors de l'affichage des pages. Ce traitement relève de GitHub, Inc. — voir sa <a href="https://docs.github.com/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener noreferrer">déclaration de confidentialité</a>.</p>
+    <p>Conformément au RGPD, vous pouvez exercer vos droits d'accès, de rectification et d'effacement à l'adresse de contact ci-dessus, ou introduire une réclamation auprès de la <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">CNIL</a>.</p>
+
+    <h2>7. Liens externes</h2>
+    <p>Ce site peut renvoyer vers des sites tiers. L'éditeur n'exerce aucun contrôle sur leur contenu et décline toute responsabilité à leur égard.</p>
+
+    <h2>8. Responsabilité</h2>
+    <p>Les contenus sont fournis « en l'état », sans garantie d'exactitude, d'exhaustivité ou de disponibilité. L'éditeur ne saurait être tenu responsable d'un dommage résultant de leur utilisation ou d'une indisponibilité du site.</p>
+
+    <h2>9. Droit applicable</h2>
+    <p>Les présentes mentions légales sont soumises au droit français. Tout litige relatif au site relève de la compétence des juridictions françaises.</p>
+
+    <p class="updated">Dernière mise à jour : 22 août 2026</p>
+
+    <a class="back" href="index.html">← Retour à l'accueil</a>
+
+</main>
+
+</body>
+</html>
