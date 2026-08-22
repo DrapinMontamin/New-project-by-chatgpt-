@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poulpe & Calamar Anti-Stress</title>
+    <style>
+        /* --- Styles Généraux --- */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0f172a, #1e1b4b);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            user-select: none;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            z-index: 10;
+        }
+
+        p {
+            margin-top: 0;
+            opacity: 0.8;
+            z-index: 10;
+        }
+
+        /* --- Zone de jeu --- */
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- Le Conteneur de Secousse --- */
+        #shake-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+        }
+
+        /* --- La Créature --- */
+        .octopus {
+            font-size: var(--base-size, 130px);
+            cursor: pointer;
+            position: relative;
+            padding: 20px;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+            
+            --scaleX: 1;
+            --scaleY: 1;
+            --skewX: 0deg;
+
+            transform: scale(var(--scaleX), var(--scaleY)) skewX(var(--skewX)) !important;
+            transition: transform 0.1s ease-out, filter 0.3s ease, font-size 0.2s ease;
+        }
+
+        /* Animation de tremblement */
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-4px, 3px) rotate(-2deg); }
+            40% { transform: translate(4px, -2px) rotate(3deg); }
+            60% { transform: translate(-4px, -3px) rotate(-3deg); }
+            80% { transform: translate(3px, 3px) rotate(2deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* Animation d'apparition douce */
+        .spawn {
+            animation: spawnAnim 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes spawnAnim {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- Les Particules --- */
+        .particle {
+            position: absolute;
+            font-size: 40px;
+            pointer-events: none;
+            z-index: 2;
+            animation: explode 1.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            transform-origin: center; 
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(0.2) rotate(var(--r));
+                opacity: 0;
+            }
+        }
+
+        /* --- Bouton Customisation --- */
+        #config-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 24px;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 110;
+            backdrop-filter: blur(5px);
+            transition: background 0.3s, transform 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #config-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        /* --- Menu de Customisation --- */
+        #custom-menu {
+            position: absolute;
+            left: -300px; 
+            top: 50%;
+            transform: translateY(-50%);
+            width: 240px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0 20px 20px 0;
+            padding: 25px;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            z-index: 105;
+            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+
+        #custom-menu.open {
+            left: 0;
+        }
+
+        #custom-menu h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 10px;
+            color: #38bdf8;
+        }
+
+        .menu-section {
+            margin-bottom: 25px;
+        }
+
+        .menu-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        .menu-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .menu-btn:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .menu-btn.active {
+            background: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
+            border-color: #38bdf8;
+        }
+
+        /* Grille de sélection simplifiée */
+        .select-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .select-option {
+            font-size: 28px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .select-option:hover, .select-option.active {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: #38bdf8;
+            transform: scale(1.05);
+        }
+
+        /* Palette de couleurs */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .color-option {
+            height: 35px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .color-option:hover, .color-option.active {
+            transform: scale(1.1);
+            border-color: white;
+        }
+
+        /* --- Copyright --- */
+        .copyright-link {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease, text-shadow 0.2s ease;
+            z-index: 100;
+        }
+
+        .copyright-link:hover {
+            color: #38bdf8;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Déstresse les Abyssaux !</h1>
+    <p>Clique pour gonfler la créature... attention l'implosion est proche !</p>
+
+    <button id="config-btn">⚙️</button>
+    <div id="custom-menu">
+        <h3>Configuration</h3>
+        
+        <div class="menu-section">
+            <label>Taille de la créature :</label>
+            <div class="btn-group">
+                <button class="menu-btn" onclick="setSize('90px', this)">Petit</button>
+                <button class="menu-btn active" onclick="setSize('130px', this)">Moyen</button>
+                <button class="menu-btn" onclick="setSize('180px', this)">Gros</button>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <label>Créature marine :</label>
+            <div class="select-grid">
+                <div class="select-option active" onclick="setEmoji('🐙', this)">🐙</div>
+                <div class="select-option" onclick="setEmoji('🦑', this)">🦑</div>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <label>Mode Couleur :</label>
+            <div class="color-grid">
+                <div class="color-option active" style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4);" onclick="setColorMode('random', this)" title="Aléatoire"></div>
+                <div class="color-option" style="background: #ff7675;" onclick="setColorMode(0, this)" title="Rose"></div>
+                <div class="color-option" style="background: #a29bfe;" onclick="setColorMode(1, this)" title="Violet"></div>
+                <div class="color-option" style="background: #74b9ff;" onclick="setColorMode(2, this)" title="Bleu"></div>
+                <div class="color-option" style="background: #55efc4;" onclick="setColorMode(3, this)" title="Vert"></div>
+                <div class="color-option" style="background: #ffeaa7;" onclick="setColorMode(4, this)" title="Orange/Jaune"></div>
+                <div class="color-option" style="background: #ffffff;" onclick="setColorMode(5, this)" title="Blanc Lumineux"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <div id="shake-wrapper">
+            <div id="octopus" class="octopus spawn">🐙</div>
+        </div>
+    </div>
+
+    <a href="https://fr.wikipedia.org/wiki/Trisomie_21" target="_blank" class="copyright-link">©copyright Hugo</a>
+
+    <script>
+        const octopus = document.getElementById('octopus');
+        const shakeWrapper = document.getElementById('shake-wrapper');
+        const container = document.getElementById('game-container');
+        const configBtn = document.getElementById('config-btn');
+        const customMenu = document.getElementById('custom-menu');
+        
+        const colors = [
+            'hue-rotate(0deg)',       // Rose
+            'hue-rotate(60deg)',      // Violet
+            'hue-rotate(130deg)',     // Bleu
+            'hue-rotate(200deg)',     // Vert
+            'hue-rotate(280deg)',     // Orange / Jaune
+            'invert(1) hue-rotate(180deg)' // Blanc magique
+        ];
+
+        let clickCount = 0;
+        let clicksNeeded = 6; 
+        let currentColorIndex = 0;
+        let currentEmoji = '🐙'; 
+        let selectedColorMode = 'random'; // Peut être 'random' ou l'index numérique d'une couleur fixe
+
+        // Ouvrir / Fermer le menu
+        configBtn.addEventListener('click', () => {
+            customMenu.classList.toggle('open');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!customMenu.contains(e.target) && e.target !== configBtn) {
+                customMenu.classList.remove('open');
+            }
+        });
+
+        // Customisations
+        function setSize(size, button) {
+            octopus.style.setProperty('--base-size', size);
+            button.parentElement.querySelector('.active').classList.remove('active');
+            button.classList.add('active');
+        }
+
+        function setEmoji(emoji, element) {
+            currentEmoji = emoji;
+            octopus.textContent = emoji;
+            element.parentElement.querySelector('.active').classList.remove('active');
+            element.classList.add('active');
+        }
+
+        function setColorMode(mode, element) {
+            selectedColorMode = mode;
+            
+            // Si l'utilisateur choisit une couleur fixe, on l'applique immédiatement
+            if (mode !== 'random') {
+                currentColorIndex = mode;
+                octopus.style.filter = colors[currentColorIndex];
+            }
+
+            element.parentElement.querySelector('.active').classList.remove('active');
+            element.classList.add('active');
+        }
+
+        // Système de jeu
+        octopus.addEventListener('click', () => {
+            clickCount++;
+
+            const stressRatio = clickCount / clicksNeeded;
+
+            const currentScaleX = 1 + (stressRatio * 0.8); 
+            const currentScaleY = 1 + (stressRatio * 0.15);
+            const currentSkewX = stressRatio * 25; 
+
+            octopus.style.setProperty('--scaleX', currentScaleX);
+            octopus.style.setProperty('--scaleY', currentScaleY);
+            octopus.style.setProperty('--skewX', `${currentSkewX}deg`);
+
+            if (stressRatio > 0.15) {
+                const shakeSpeed = Math.max(0.04, 0.35 - (stressRatio * 0.3)); 
+                shakeWrapper.style.animation = `shake ${shakeSpeed}s linear infinite`;
+            }
+
+            if (clickCount >= clicksNeeded) {
+                explodeOctopus();
+            }
+        });
+
+        function explodeOctopus() {
+            octopus.style.display = 'none';
+            shakeWrapper.style.animation = 'none'; 
+
+            const containerRect = container.getBoundingClientRect();
+            const centerX = containerRect.width / 2;
+            const centerY = containerRect.height / 2;
+
+            const particleCount = 60; 
+            for (let i = 0; i < particleCount; i++) {
+                createParticle(centerX, centerY);
+            }
+
+            setTimeout(() => {
+                resetOctopus();
+            }, 2300);
+        }
+
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.textContent = currentEmoji;
+            
+            particle.style.filter = colors[currentColorIndex];
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 150 + Math.random() * 550; 
+            
+            const destX = Math.cos(angle) * distance;
+            const destY = Math.sin(angle) * distance;
+            const rotation = Math.random() * 720 - 360; 
+
+            particle.style.setProperty('--x', `${destX}px`);
+            particle.style.setProperty('--y', `${destY}px`);
+            particle.style.setProperty('--r', `${rotation}deg`);
+
+            container.appendChild(particle);
+
+            particle.addEventListener('animationend', () => {
+                particle.remove();
+            });
+        }
+
+        function resetOctopus() {
+            // Choix de la couleur pour le prochain round
+            if (selectedColorMode === 'random') {
+                let nextColorIndex;
+                do {
+                    nextColorIndex = Math.floor(Math.random() * colors.length);
+                } while (nextColorIndex === currentColorIndex);
+                currentColorIndex = nextColorIndex;
+            } else {
+                currentColorIndex = selectedColorMode;
+            }
+            
+            octopus.style.filter = colors[currentColorIndex];
+
+            clickCount = 0;
+            clicksNeeded = 4 + Math.floor(Math.random() * 5); 
+            
+            octopus.style.setProperty('--scaleX', '1');
+            octopus.style.setProperty('--setProperty', '1');
+            octopus.style.setProperty('--scaleY', '1');
+            octopus.style.setProperty('--skewX', '0deg');
+            shakeWrapper.style.animation = 'none';
+            
+            octopus.style.display = 'block';
+            octopus.classList.remove('spawn');
+            void octopus.offsetWidth; 
+            octopus.classList.add('spawn');
+        }
+    </script>
+</body>
+</html>

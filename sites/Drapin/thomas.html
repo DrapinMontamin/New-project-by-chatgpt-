@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Bouton Thomas</title>
+
+<style>
+body{
+    margin:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    background:#0f172a;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+/* Bouton */
+.btn{
+    position:relative;
+    padding:18px 60px;
+    font-size:28px;
+    font-weight:bold;
+    letter-spacing:2px;
+    color:white;
+    border:none;
+    border-radius:60px;
+    cursor:pointer;
+    overflow:hidden;
+    background:linear-gradient(
+        135deg,
+        #4f46e5,
+        #7c3aed,
+        #06b6d4,
+        #4f46e5
+    );
+    background-size:400%;
+    animation:gradient 8s ease infinite;
+    transition:.35s;
+    box-shadow:
+        0 0 20px rgba(99,102,241,.5),
+        inset 0 0 10px rgba(255,255,255,.15);
+}
+
+/* Halo */
+.btn::before{
+    content:"";
+    position:absolute;
+    top:-50%;
+    left:-120%;
+    width:80%;
+    height:200%;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.8),
+        transparent
+    );
+    transform:rotate(25deg);
+    transition:.8s;
+}
+
+.btn:hover::before{
+    left:150%;
+}
+
+.btn:hover{
+    transform:translateY(-6px) scale(1.08);
+    box-shadow:
+        0 0 35px rgba(59,130,246,.9),
+        0 0 80px rgba(99,102,241,.5);
+}
+
+.btn:active{
+    transform:scale(.96);
+}
+
+@keyframes gradient{
+    0%{background-position:0%;}
+    50%{background-position:100%;}
+    100%{background-position:0%;}
+}
+</style>
+</head>
+
+<body>
+
+<button class="btn">Thomas</button>
+
+</body>
+</html>
